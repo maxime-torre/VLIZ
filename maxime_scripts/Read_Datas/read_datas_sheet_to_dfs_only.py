@@ -10,7 +10,7 @@ sys.path.insert(0, parent_dir)
 
 warnings.filterwarnings("ignore", category=UserWarning, module="openpyxl")
 
-def read_excel_sheets_xlsx(excel_file, Display = True, start_sheet=2, skip_rows=1):
+def read_excel_sheets_xlsx(excel_file, Display = False, start_sheet=2, skip_rows=1):
     # Lire le nom de toutes les feuilles
     sheet_names = pd.ExcelFile(excel_file).sheet_names
  
@@ -25,7 +25,7 @@ def read_excel_sheets_xlsx(excel_file, Display = True, start_sheet=2, skip_rows=
 
     return dfs
 
-def read_excel_sheets_csv(excel_file, Display = True, start_sheet=2, skip_rows=1):
+def read_excel_sheets_csv(excel_file, Display = False, start_sheet=2, skip_rows=1):
     # Lire le nom de toutes les feuilles
     sheet_names = pd.ExcelFile(excel_file).sheet_names
 
