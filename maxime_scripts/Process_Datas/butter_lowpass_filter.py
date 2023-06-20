@@ -16,3 +16,12 @@ def butter_lowpass_filter(dataset, cutoff, fs, order):
     y = filtfilt(b, a, dataset)
     
     return y
+
+import scipy.signal
+
+def low_pass_filter(data, cutoff, fs, order=5):
+    nyq = 0.5 * fs  # Fréquence de Nyquist
+    normal_cutoff = cutoff / nyq
+    b, a = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False)
+    y = scipy.signal.lfilter(b, a, data)
+    return y

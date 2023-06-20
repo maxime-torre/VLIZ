@@ -44,7 +44,7 @@ def plot_dataframe_dict(df_dict, N):
         )
         fig.show()
 
-def plot_dataframe(df, N):
+def plot_dataframe(df, N, *args):
     # Chercher la première colonne qui est de type datetime
     if 'DateTime' in df.columns:
         df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
@@ -62,34 +62,33 @@ def plot_dataframe(df, N):
     # Prendre les N premières valeurs du DataFrame
     df_N = df.head(N)
 
-    # Déterminer le nombre de colonnes numériques
-    num_columns = sum([1 for column in df_N.columns if column != time_column and (pd.api.types.is_numeric_dtype(df_N[column]) or df_N[column].dtype == np.complex)])
+    # Déterminer le nombre de colonnes numériques et le nombre d'arguments supplémentaires
+    num_columns = sum([1 for column in df_N.columns if column != time_column and (pd.api.types.is_numeric_dtype(df_N[column]) or df_N[column].dtype == np.complex)]) + len(args)
 
-    # Créer un subplot pour chaque colonne numérique
+    # Créer un subplot pour chaque colonne numérique et chaque argument supplémentaire
     fig = make_subplots(rows=num_columns, cols=1)
 
     # Indice de la ligne pour le subplot
     row_index = 1
 
-    for column in df_N.columns:
-        if column != time_column:
-            if pd.api.types.is_numeric_dtype(df_N[column]):  # Ignorer les colonnes non numériques
-                fig.add_trace(go.Scatter(x=df_N[time_column], y=df_N[column], mode='lines', name=column), row=row_index, col=1)
-                row_index += 1
-            elif df_N[column].dtype == np.complex:
-                # Extraire les parties réelles et imaginaires des nombres complexes
-                real_parts = df_N[column].apply(lambda x: x.real).to_list()
-                imag_parts = df_N[column].apply(lambda x: x.imag).to_list()
+    # Ajouter les tracés pour chaque argument supplémentaire
+    for arg in args:
+        x, y = arg[:2]  # Extraire x et y
 
-                # Ajout d'une vérification pour s'assurer qu'il n'y a pas de nombres complexes dans les listes
-                for part in real_parts + imag_parts:
-                    if isinstance(part, complex):
-                        raise ValueError(f"Un nombre complexe a été détecté dans les parties réelles ou imaginaires : {part}")
+        # Extraire xmin et xmax si disponibles, sinon les définir à None
+        xmin = arg[2] if len(arg) > 2 else None
+        xmax = arg[3] if len(arg) > 3 else None
 
-                fig.add_trace(go.Scatter(x=df_N[time_column], y=real_parts, mode='lines', name=f'{column} (partie réelle)'), row=row_index, col=1)
-                row_index += 1
-                fig.add_trace(go.Scatter(x=df_N[time_column], y=imag_parts, mode='lines', name=f'{column} (partie imaginaire)'), row=row_index, col=1)
-                row_index += 1
+        # Si xmin et xmax sont définis, filtrer les données
+        if xmin is not None and xmax is not None:
+            mask = (x >= xmin) & (x <= xmax)
+            x = x[mask]
+            y = y[mask]
+
+        fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=f'{y.name} en fonction de {x.name}'), row=row_index, col=1)
+        fig.update_xaxes(title_text=x.name, row=row_index, col=1)
+        fig.update_yaxes(title_text=y.name, row=row_index, col=1)
+        row_index += 1
 
     fig.update_layout(
         title_text=f"Visualisation des {N} premières valeurs du DataFrame",
@@ -97,10 +96,8 @@ def plot_dataframe(df, N):
         showlegend=True,
     )
 
-    fig.update_yaxes(title_text="Valeurs")
-    fig.update_xaxes(title_text="Temps")
-
     fig.show()
+
 
 
 

@@ -12,4 +12,5 @@ from Process_Datas.butter_lowpass_filter import butter_lowpass_filter
 
 def add_tide_column(df, cutoff, fs, order):
     df["tide"] = butter_lowpass_filter(df["Sea pressure"], cutoff, fs, order)
+    df['tide'] = df['tide'] -  9.13
     return df
