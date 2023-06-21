@@ -52,7 +52,7 @@ def compute_spectrum(signal, fe, n_segments=100):
     freqs = np.mean(np.array(freqs_list), axis=0)
 
     amplitude_db_avg = pd.Series(amplitude_db_avg, name='amplitude dB')
-    freqs = pd.Series(freqs, name='Fréquency')
+    freqs = pd.Series(freqs, name='Frequency')
 
     return amplitude_db_avg, freqs
 

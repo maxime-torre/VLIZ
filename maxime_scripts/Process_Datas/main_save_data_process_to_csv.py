@@ -1,5 +1,3 @@
-# main.py
-
 import sys
 import os
 import pandas as pd
@@ -26,7 +24,6 @@ from Process_Datas.remove_jump_rows import remove_jump_rows
 from Process_Datas.bandpass_filter import bandpass_filter
 from Plots_datas.plot_spectrogram import compute_spectrogram
 from Process_Datas.process_concatenate_save_dataframe import process_concatenate_save_dataframe
-from Read_Datas.read_pickle_to_df import read_pickle_to_df
 
 N = parameters.N
 excel_file_path = parameters.excel_file_path
@@ -53,34 +50,5 @@ cutoff_low_pass = parameters.cutoff_low_pass
 fs_data = parameters.fs_data
 
 
-
-df = read_pickle_to_df(excel_file_path)
-
-bandpass_filtred_signal = bandpass_filter(df['Sea pressure'], fe_ig, fmin_ig, fmax_ig)
-
-mean_tide = df['tide'].mean()
-print(f"mean_tide : {mean_tide} m")
-
-Temperature = df['Temperature']
-Time = df['Time']
-# Prenez la valeur minimale de 'Time' comme référence
-reference_time = df['Time'].min()
-# Convertissez la colonne 'Time' en secondes depuis la date de référence
-Time_in_seconds = (df['Time'] - reference_time) // pd.Timedelta('1s')
-
-Sea_pressure = df['Sea pressure']
-Depth = df['Depth']
-Surface = df['surface']
-Tide = df['tide']
-k0 = df['k0 (deep water number)']
-
-spectre_dB, freqs = compute_spectrum(Sea_pressure, fe)
-
-plot_dataframe(df, N, (Time, Temperature), (Time, Sea_pressure), (Time, Depth), (Time, Tide), (Time, k0), (Time, Surface), 
-               #(Time, Energy_IG), (Time, Energy_SS),
-               (freqs, spectre_dB, fmin_ig, fmax_ig ),
-               (freqs, spectre_dB, fmin_ss, fmax_ss ),
-               (Time, bandpass_filtred_signal))
-
-#compute_spectrogram(df['Sea pressure'], fe, fmin_ig,fmax_ig)
-
+df = process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff, fs, order, hbed, fs_data, fe)
+print(df)
