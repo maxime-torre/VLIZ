@@ -11,11 +11,8 @@ sys.path.insert(0, parent_dir)
 
 def read_pickle_to_df(excel_file_path, Display = True):
     # Séparer le chemin de base et l'extension
-    base_path, extension = os.path.splitext(excel_file_path)
 
-    # Ajouter "_process_data" au chemin de base, puis ajouter l'extension .pkl
-    new_path = base_path + "_process_data.pkl"
-    df = pd.read_pickle(new_path)
+    df = pd.read_pickle(excel_file_path)
     
     if Display :
         print(df)

@@ -97,6 +97,45 @@ def plot_dataframe(df, N, *args):
     )
 
     fig.show()
+    
+def plot_dataframe_columns(df):
+    # Chercher la première colonne qui est de type datetime
+    if 'DateTime' in df.columns:
+        df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
+    elif 'Time' in df.columns:
+        df['Time'] = pd.to_datetime(df['Time'])
+    else:
+        print("No suitable column for conversion to DateTime found.")
+
+    time_column = next((col for col in df.columns if df[col].dtype == 'datetime64[ns]'), None)
+
+    if time_column is None:
+        print("Aucune colonne de type datetime trouvée.")
+        return
+
+    # Déterminer le nombre de colonnes numériques
+    num_columns = sum([1 for column in df.columns if column != time_column and (pd.api.types.is_numeric_dtype(df[column]) or df[column].dtype == np.complex)])
+
+    # Créer un subplot pour chaque colonne numérique
+    fig = make_subplots(rows=num_columns, cols=1)
+
+    # Indice de la ligne pour le subplot
+    row_index = 1
+
+    for column in df.columns:
+        if column != time_column and (pd.api.types.is_numeric_dtype(df[column]) or df[column].dtype == np.complex):
+            fig.add_trace(go.Scatter(x=df[time_column], y=df[column], mode='lines', name=f'{column} en fonction de {time_column}'), row=row_index, col=1)
+            fig.update_xaxes(title_text=time_column, row=row_index, col=1)
+            fig.update_yaxes(title_text=column, row=row_index, col=1)
+            row_index += 1
+
+    fig.update_layout(
+        title_text="Visualisation des colonnes du DataFrame",
+        height=200*num_columns,
+        showlegend=True,
+    )
+
+    fig.show()
 
 
 

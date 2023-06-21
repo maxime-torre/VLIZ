@@ -15,21 +15,12 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 from Process_Datas import parameters
-from Process_Datas.dict_dataframe_to_organize_data import dict_pressure_dataframe_to_organize_dataframe
-from Process_Datas.add_tide_column import add_tide_column
-from Process_Datas.add_surface_column import add_surface_column
-from Plots_datas.plots_dataframe import plot_dataframe
-from Process_Datas.add_surface_correlation_column import add_surface_correlation_column_and_cte_evaluation, check_complex_values
-from Process_Datas.add_waves_description_columns import fourier, fourier_windows
-from Process_Datas.compute_spectrum import compute_spectrum
-from Process_Datas.remove_jump_rows import remove_jump_rows
-from Process_Datas.bandpass_filter import bandpass_filter
-from Plots_datas.plot_spectrogram import compute_spectrogram
-from Process_Datas.process_concatenate_save_dataframe import process_concatenate_save_dataframe
-from Read_Datas.read_pickle_to_df import read_pickle_to_df
+from Plots_datas.plot_process_data_wave_analysis import plot_process_data_wave_analysis
+
 
 N = parameters.N
-excel_file_path = parameters.excel_file_path
+excel_pressure_file_path = parameters.excel_file_path
+excel_adcp_file_path = parameters.adcp_file_path
 columns_to_drop = parameters.columns_to_drop
 
 fs = parameters.fs
@@ -53,34 +44,5 @@ cutoff_low_pass = parameters.cutoff_low_pass
 fs_data = parameters.fs_data
 
 
-
-df = read_pickle_to_df(excel_file_path)
-
-bandpass_filtred_signal = bandpass_filter(df['Sea pressure'], fe_ig, fmin_ig, fmax_ig)
-
-mean_tide = df['tide'].mean()
-print(f"mean_tide : {mean_tide} m")
-
-Temperature = df['Temperature']
-Time = df['Time']
-# Prenez la valeur minimale de 'Time' comme référence
-reference_time = df['Time'].min()
-# Convertissez la colonne 'Time' en secondes depuis la date de référence
-Time_in_seconds = (df['Time'] - reference_time) // pd.Timedelta('1s')
-
-Sea_pressure = df['Sea pressure']
-Depth = df['Depth']
-Surface = df['surface']
-Tide = df['tide']
-k0 = df['k0 (deep water number)']
-
-spectre_dB, freqs = compute_spectrum(Sea_pressure, fe)
-
-plot_dataframe(df, N, (Time, Temperature), (Time, Sea_pressure), (Time, Depth), (Time, Tide), (Time, k0), (Time, Surface), 
-               #(Time, Energy_IG), (Time, Energy_SS),
-               (freqs, spectre_dB, fmin_ig, fmax_ig ),
-               (freqs, spectre_dB, fmin_ss, fmax_ss ),
-               (Time, bandpass_filtred_signal))
-
-#compute_spectrogram(df['Sea pressure'], fe, fmin_ig,fmax_ig)
+plot_process_data_wave_analysis(excel_adcp_file_path, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data, fe, N)
 

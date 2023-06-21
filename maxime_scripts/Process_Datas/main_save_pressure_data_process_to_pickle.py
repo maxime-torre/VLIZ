@@ -13,16 +13,6 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 from Process_Datas import parameters
-from Process_Datas.dict_dataframe_to_organize_data import dict_pressure_dataframe_to_organize_dataframe
-from Process_Datas.add_tide_column import add_tide_column
-from Process_Datas.add_surface_column import add_surface_column
-from Plots_datas.plots_dataframe import plot_dataframe
-from Process_Datas.add_surface_correlation_column import add_surface_correlation_column_and_cte_evaluation, check_complex_values
-from Process_Datas.add_waves_description_columns import fourier, fourier_windows
-from Process_Datas.compute_spectrum import compute_spectrum
-from Process_Datas.remove_jump_rows import remove_jump_rows
-from Process_Datas.bandpass_filter import bandpass_filter
-from Plots_datas.plot_spectrogram import compute_spectrogram
 from Process_Datas.process_concatenate_save_dataframe import process_concatenate_save_dataframe
 
 N = parameters.N

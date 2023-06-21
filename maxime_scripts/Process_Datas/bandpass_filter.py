@@ -8,26 +8,32 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from scipy.signal import butter, lfilter, welch
-from scipy.fftpack import fft, fftfreq
+import numpy as np
+from scipy.signal import butter, lfilter
 
-def bandpass_filter(signal, fe, fmin, fmax):
-    # Filtre passe-bande
-    def butter_bandpass(lowcut, highcut, fs, order=5):
-        nyq = 0.5 * fs
-        low = lowcut / nyq
-        high = highcut / nyq
-        b, a = butter(order, [low, high], btype='band')
-        return b, a
+def butter_bandpass(lowcut, highcut, fs, order=5):
+    """ 
+    Construit un filtre passe-bande Butterworth.
+    lowcut : Fréquence de coupure basse
+    highcut : Fréquence de coupure haute
+    fs : Fréquence d'échantillonnage
+    order : Ordre du filtre
+    """
+    nyq = 0.5 * fs  # Fréquence de Nyquist
+    low = lowcut / nyq
+    high = highcut / nyq
+    b, a = butter(order, [low, high], btype='band')
+    return b, a
 
-    def butter_bandpass_filter(data, lowcut, highcut, fs, order=5):
-        b, a = butter_bandpass(lowcut, highcut, fs, order=order)
-        y = lfilter(b, a, data)
-        return y
-
-    # Appliquer le filtre passe-bande
-    signal_filt = butter_bandpass_filter(signal, fmin, fmax, fe)
-
-    signal_filt = pd.Series(signal_filt, name='bandpass-filtered signal')
-
-    return signal_filt
+def apply_bandpass_filter(data, lowcut, highcut, fs, order=5):
+    """
+    Applique un filtre passe-bande à un signal.
+    data : Signal à filtrer
+    lowcut : Fréquence de coupure basse
+    highcut : Fréquence de coupure haute
+    fs : Fréquence d'échantillonnage
+    order : Ordre du filtre
+    """
+    b, a = butter_bandpass(lowcut, highcut, fs, order=order)
+    y = lfilter(b, a, data)
+    return y
