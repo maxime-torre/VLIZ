@@ -11,8 +11,11 @@ sys.path.insert(0, parent_dir)
 excel_file_path = 'C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\PRESSURE SENSOR\\210961_20220902_1748.xlsx' 
 columns_to_drop = ['BPR temperature', 'BPR pressure', 'Period', 'Period.1']
 adcp_file_path = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\ADCP\\S102377A024_Test_RBR_Q3B0_1.csv"
+directory_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer"
+pickle_dict_of_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data.pkl"
+pickle_all_adcp_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data_all.pkl"
 
-N = 400000
+N = 10000
 
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 2
@@ -36,7 +39,8 @@ hour = 3 # Window size in hours
 minutes = 2
 seconds = 60
 fe = 1/10
-fs_data = 4
+fs_data = 2
+fs_data_adcp_all = 4
 cutoff_low_pass = 0.1
 
 threshold = 0.1

@@ -15,7 +15,6 @@ def read_semicolon_separated_csv(file_path, display=True):
     df = pd.read_csv(file_path, sep=';')
     if 'DateTime' in df.columns:
         df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
-    df['DateTime'] = df['DateTime'] + timedelta(hours = 2)
 
     # Afficher le DataFrame si demandé
     if display:

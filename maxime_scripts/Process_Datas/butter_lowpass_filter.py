@@ -27,7 +27,7 @@ def butter_highpass_filter(dataset, cutoff, fs, order):
     return y
 
 
-def butter_bandpass_filter(dataset, lowcut, highcut, fs, order=3):
+def butter_bandpass_filter(dataset, lowcut, highcut, fs, order=2):
     # Filtre passe-haut
     y = butter_highpass_filter(dataset, lowcut, fs, order)
     

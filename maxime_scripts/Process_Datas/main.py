@@ -23,6 +23,8 @@ excel_pressure_file_path = parameters.excel_file_path
 excel_adcp_file_path = parameters.adcp_file_path
 columns_to_drop = parameters.columns_to_drop
 
+pickle_all_adcp_data_path = parameters.pickle_all_adcp_data_path
+
 fs = parameters.fs
 dt = parameters.dt
 cutoff = parameters.cutoff
@@ -42,7 +44,8 @@ seconds = parameters.seconds
 fe=parameters.fe
 cutoff_low_pass = parameters.cutoff_low_pass
 fs_data = parameters.fs_data
+fs_data_adcp_all = parameters.fs_data_adcp_all
 
 
-plot_process_data_wave_analysis(excel_adcp_file_path, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data, fe, N)
+plot_process_data_wave_analysis(pickle_all_adcp_data_path, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data_adcp_all, fe, N,  seconds, fe_ig, fe_ss)
 

@@ -11,62 +11,68 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-
-def fourier(signal,fmin,fmax, fs):
-    dt = 1/fs
-    # print(str(fmin)[0:6]+' Hz < f < '+str(fmax)[0:6]+' Hz'); print(' ')
-    # Number of sample points
+def calculate_Hm0(signal, dt, fmin, fmax):
     n = len(signal)   
-    
-    # Remove mean from the signal
-    # mean = np.mean(signal)
-    
+
     # Fast Fourier transforms
-    # f = np.fft.fft(signal-mean)
     f = np.fft.fft(signal)
     
-    #Calculate the spectral energy
+    # Calculate the spectral energy
     p = f*np.conj(f)/n
-    energy = 2*dt*p[0:n//2]; 
+    energy = 2*dt*p[0:n//2] 
     energy = energy.real
     
-    #Calculate the frequency
+    # Calculate the frequency
     fre = fftfreq(n, dt)[:n//2]
-    # fre = 1/dt*np.arange(0,n)/n
     
-    #Integral of the spectrum
+    # Integral of the spectrum
     index = np.where((fre>fmin) & (fre<fmax))[0]
     m0 = sum(energy[index])*(fre[1]-fre[0])
     
-    #Significant spectral height
-    Hm0 = 4*np.sqrt(m0); 
-    # print('Hm0 = '+str(Hm0)[0:6]+' m')
+    # Significant spectral height
+    Hm0 = 4*np.sqrt(m0)
+
+    return Hm0
+
+def fourier(signal, fmin, fmax, fs):
+    dt = 1/fs
+    n = len(signal)   
+
+    f = np.fft.fft(signal)
+    p = f*np.conj(f)/n
+    energy = 2*dt*p[0:n//2] 
+    energy = energy.real
     
-    #Peak period
+    fre = fftfreq(n, dt)[:n//2]
+    
+    Hm0 = calculate_Hm0(signal, dt, fmin, fmax)
+
+    index = np.where((fre>fmin) & (fre<fmax))[0]
+
     if len(index)==0:
         index = np.array([1])
     else:
         index = index
                 
     indmax = np.where(energy[index]==max(energy[index]))
-    Tp = 1/fre[index][indmax][0]; 
-    # print('Tp = '+str(Tp)[0:6]+' s'); print(' '); print(' ')
-    
+    Tp = 1/fre[index][indmax][0]
+
     return [energy[index], fre[index], Hm0, Tp]
 
 # Define the fourier_windows function
 
 def fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss):
     # Initialize columns to store the results
-    #df["Tp,IG"] = np.nan
-    #df["frequency,IG"] = np.nan
+    df["Tp,IG"] = np.nan
+    df["frequency,IG"] = np.nan
     df["energy,IG"] = np.nan
-    #df["Tp,SS"] = np.nan
-    #df["frequency,SS"] = np.nan
+    df['Hm0,IG'] = np.nan
+    df["Tp,SS"] = np.nan
+    df["frequency,SS"] = np.nan
     df["energy,SS"] = np.nan
+    df['Hm0,SS'] = np.nan
     
-    Hm0_IG = 0
-    Hm0_SS = 0
+    df['Hm0,total'] = np.nan
     
     half_window = timedelta(seconds = seconds / 2)
     
@@ -88,12 +94,18 @@ def fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_s
             
             # Save the results for this timestamp
             df.loc[i, "energy,IG"] = np.mean(result_IG[0])
-            #df.loc[i, "frequency,IG"] = np.mean(result_IG[1])
-            #df.loc[i, "Tp,IG"] = result_IG[3]
+            df.loc[i, "frequency,IG"] = np.mean(result_IG[1])
+            df.loc[i, "Tp,IG"] = result_IG[3]
+            print(f"Hm0,IG : {result_IG[2]}")
+            df.loc[i, 'Hm0,IG'] = result_IG[2]
             
             df.loc[i, "energy,SS"] = np.mean(result_SS[0])
-            #df.loc[i, "frequency,SS"] = np.mean(result_SS[1])
-            #df.loc[i, "Tp,SS"] = result_SS[3]
+            df.loc[i, "frequency,SS"] = np.mean(result_SS[1])
+            df.loc[i, "Tp,SS"] = result_SS[3]
+            print(f"Hm0,SS : {result_SS[2]}")
+            df.loc[i, 'Hm0,SS'] = result_SS[2]
+            
+            df.loc[i,'Hm0,total'] = df.loc[i, 'Hm0,IG'] + df.loc[i, 'Hm0,SS']
 
     return df
 
