@@ -15,7 +15,7 @@ directory_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas
 pickle_dict_of_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data.pkl"
 pickle_all_adcp_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data_all.pkl"
 
-N = 10000
+N = 5000
 
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 2

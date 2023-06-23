@@ -61,7 +61,17 @@ def plot_process_data_wave_analysis(excel_file_path, fmin_ig, fmax_ig, fmin_ss, 
     energy_SS = df['energy,SS']
     Hm0_total = df['Hm0,total']
     
-    plot_dataframe(df, N, (Time, Temperature), (Time, Sea_pressure),
+    plot_dataframe(df, N, 
+                   [(Time,Temperature,Sea_pressure),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    plot_dataframe(df, N, 
+                   [(Time,Hm0_IG,Hm0_SS,Hm0_total),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5)), 
+                    (Time.min()+timedelta(minutes=15),Time.max()-timedelta(minutes=15), 'ig waves'), (Time.min()+timedelta(minutes=10),Time.max()-timedelta(minutes=10), 'sea swell waves')])
+
+    
+"""    plot_dataframe(df, N, (Time, Temperature), (Time, Sea_pressure),
                    #(Time, Depth), 
                    #(Time, Tide), 
                    #(Time, k0), 
@@ -76,4 +86,4 @@ def plot_process_data_wave_analysis(excel_file_path, fmin_ig, fmax_ig, fmin_ss, 
                 (Time, Hm0_SS, Time.min() + timedelta( minutes = 5), Time.max() - timedelta( minutes = 5)),
                 (Time, Hm0_total, Time.min() + timedelta( minutes = 5), Time.max() - timedelta( minutes = 5)),
                 (frequency_IG, energy_IG),
-                (frequency_SS, energy_SS))
+                (frequency_SS, energy_SS))"""

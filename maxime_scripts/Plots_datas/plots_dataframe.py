@@ -10,8 +10,7 @@ import matplotlib.dates as mdates
 import matplotlib.pyplot as plt
 from plotly.subplots import make_subplots
 import numpy as np
-
-
+import random
 
 # Ajouter le chemin du dossier grand-parent (le dossier principal V0)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -44,7 +43,15 @@ def plot_dataframe_dict(df_dict, N):
         )
         fig.show()
 
-def plot_dataframe(df, N, *args):
+def get_random_color():
+    # Generate a random color
+    r = random.randint(0,255)
+    g = random.randint(0,255)
+    b = random.randint(0,255)
+    return f'rgb({r},{g},{b})'
+
+
+def subplot_dataframe(df, N, *args):
     # Chercher la première colonne qui est de type datetime
     if 'DateTime' in df.columns:
         df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
@@ -97,6 +104,83 @@ def plot_dataframe(df, N, *args):
     )
 
     fig.show()
+    
+def plot_dataframe(df, N, *args):
+    if 'DateTime' in df.columns:
+        df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
+    elif 'Time' in df.columns:
+        df['Time'] = pd.to_datetime(df['Time'], format='%m/%d/%Y %H:%M:%S')
+    else:
+        print("No suitable column for conversion to DateTime found.")
+
+    time_column = next((col for col in df.columns if df[col].dtype == 'datetime64[ns]'), None)
+
+    if time_column is None:
+        print("Aucune colonne de type datetime trouvée.")
+        return
+
+    fig = go.Figure()
+
+    # Create a list to hold the names of all y traces for the title
+    y_names = []
+
+    for arg in args:
+        x, *ys = arg[0]
+        x_range = arg[1] if len(arg) > 1 else None
+        crossbars = arg[2:] if len(arg) > 2 else []
+
+        if x_range is not None:
+            xmin, xmax = x_range
+            mask = (x >= xmin) & (x <= xmax)
+            x = x[mask]
+            ys = [y[mask] for y in ys]
+
+        for y in ys:
+            fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=y.name))
+            y_names.append(y.name)
+
+        for crossbar in crossbars:
+            x1_crossbar, x2_crossbar, name = crossbar
+            min_y = min(min(y) for y in ys)
+            max_y = max(max(y) for y in ys)
+            line_color = get_random_color()
+
+            # Draw rectangle
+            fig.add_shape(type="rect",
+                x0=x1_crossbar, y0=min_y, x1=x2_crossbar, y1=max_y,
+                line=dict(color=line_color, width=2),
+                fillcolor=line_color, opacity=0.2
+            )
+            
+            # Add invisible trace for the legend
+            fig.add_trace(go.Scatter(
+                x=[None], y=[None],
+                mode='markers+text',  # Utilisation du mode 'markers+text' pour afficher la forme personnalisée
+                marker=dict(size=10, color=line_color, symbol='square'),  # Utilisation du symbole 'square' pour les marqueurs
+                showlegend=True,
+                name=name
+            ))
+
+    # Create the title using the x and y names
+    title_text = f"Plot of {', '.join(y_names)} as a function of {x.name} over {N} values"
+
+    fig.update_layout(
+        title_text=title_text,
+        title_font_size=30,  # Taille de la police du titre
+        legend=dict(
+            yanchor="top",
+            y=-0,
+            xanchor="left",
+            x=0,
+            font=dict(size=20)  # Taille de la police de la légende
+        ),
+        xaxis_title=x.name  # Ajout de la légende de l'axe x
+    )
+
+    fig.show()
+
+
+
     
 def plot_dataframe_columns(df):
     # Chercher la première colonne qui est de type datetime
