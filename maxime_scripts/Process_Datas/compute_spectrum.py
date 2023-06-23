@@ -12,7 +12,8 @@ sys.path.insert(0, parent_dir)
 
 import numpy as np
 
-def compute_spectrum(signal, fe, n_segments=100):
+def compute_spectrum(df, signal_column_name, fe, n_segments=100):
+    signal = df[signal_column_name]
     # Assurez-vous que le signal est divisible par n_segments
     divisible_length = len(signal) - len(signal) % n_segments
     signal = signal[:divisible_length]

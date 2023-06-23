@@ -105,8 +105,8 @@ def subplot_dataframe(df, N, *args):
 
     fig.show()
     
-def plot_dataframe(df, N, *args):
-    if 'DateTime' in df.columns:
+def plot_dataframe(N, *args):
+    """if 'DateTime' in df.columns:
         df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
     elif 'Time' in df.columns:
         df['Time'] = pd.to_datetime(df['Time'], format='%m/%d/%Y %H:%M:%S')
@@ -117,7 +117,7 @@ def plot_dataframe(df, N, *args):
 
     if time_column is None:
         print("Aucune colonne de type datetime trouvée.")
-        return
+        return"""
 
     fig = go.Figure()
 
@@ -133,7 +133,7 @@ def plot_dataframe(df, N, *args):
             xmin, xmax = x_range
             mask = (x >= xmin) & (x <= xmax)
             x = x[mask]
-            ys = [y[mask] for y in ys]
+            ys = [y.reindex(x.index)[mask] for y in ys]  # Réindexation avant d'appliquer le masque
 
         for y in ys:
             fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=y.name))

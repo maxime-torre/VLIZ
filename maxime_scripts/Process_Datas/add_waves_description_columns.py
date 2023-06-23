@@ -5,6 +5,7 @@ from scipy.signal import butter,filtfilt
 import numpy as np
 from scipy.fft import fft, fftfreq
 from datetime import datetime, timedelta
+from tqdm import tqdm
 
 # Ajouter le chemin du dossier grand-parent (le dossier principal V0)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -61,7 +62,7 @@ def fourier(signal, fmin, fmax, fs):
 
 # Define the fourier_windows function
 
-def fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss):
+def fourier_windows(df,df_signal_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss):
     # Initialize columns to store the results
     df["Tp,IG"] = np.nan
     df["frequency,IG"] = np.nan
@@ -77,12 +78,12 @@ def fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_s
     half_window = timedelta(seconds = seconds / 2)
     
     # Loop through each timestamp
-    for i, row in df.iterrows():
+    for i, row in tqdm(list((df.iterrows()))):
         t = row['Time']
-        print(f" i : {i}")
+        #print(f" i : {i}")
         
         # Get data in current time window
-        window = df.loc[(df['Time'] >= t - half_window) & (df['Time'] < t + half_window), 'Sea pressure']
+        window = df.loc[(df['Time'] >= t - half_window) & (df['Time'] < t + half_window), df_signal_name]
         
         # Check if window has data
         if len(window) > 0:
@@ -96,13 +97,11 @@ def fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_s
             df.loc[i, "energy,IG"] = np.mean(result_IG[0])
             df.loc[i, "frequency,IG"] = np.mean(result_IG[1])
             df.loc[i, "Tp,IG"] = result_IG[3]
-            print(f"Hm0,IG : {result_IG[2]}")
             df.loc[i, 'Hm0,IG'] = result_IG[2]
             
             df.loc[i, "energy,SS"] = np.mean(result_SS[0])
             df.loc[i, "frequency,SS"] = np.mean(result_SS[1])
             df.loc[i, "Tp,SS"] = result_SS[3]
-            print(f"Hm0,SS : {result_SS[2]}")
             df.loc[i, 'Hm0,SS'] = result_SS[2]
             
             df.loc[i,'Hm0,total'] = df.loc[i, 'Hm0,IG'] + df.loc[i, 'Hm0,SS']

@@ -20,7 +20,12 @@ N = parameters.N
 """df = read_semicolon_separated_csv(ADCP_path_file)
 plot_dataframe(df, N)"""
 
-pickle_file_path = parameters.pickle_path_file
+pickle_path_file_ADCP = parameters.pickle_path_file_ADCP
+pickle_path_file_Pressure_sensor = parameters.pickle_path_file_Pressure_sensor
 
-df = read_pickle_to_df(pickle_file_path)
-plot_dataframe(df, N) 
+print("---------------------pickle_path_file_ADCP---------------------")
+df = read_pickle_to_df(pickle_path_file_ADCP)
+print(df.info())
+print("---------------------pickle_path_file_Pressure_sensor---------------------")
+df2 = read_pickle_to_df(pickle_path_file_Pressure_sensor)
+print(df2.info())

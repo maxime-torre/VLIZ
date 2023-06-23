@@ -13,6 +13,7 @@ def read_pickle_to_df(excel_file_path, Display = True):
     # Séparer le chemin de base et l'extension
 
     df = pd.read_pickle(excel_file_path)
+    df = df.reset_index(drop=True)
     
     if Display :
         print(df)
