@@ -9,7 +9,7 @@ parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
 
-def read_pickle_to_df(excel_file_path, Display = True):
+def read_pickle_to_df(excel_file_path, Display = False):
     # Séparer le chemin de base et l'extension
 
     df = pd.read_pickle(excel_file_path)

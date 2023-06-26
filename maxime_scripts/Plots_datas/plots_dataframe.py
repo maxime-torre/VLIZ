@@ -166,7 +166,7 @@ def plot_dataframe(N, *args):
 
     fig.update_layout(
         title_text=title_text,
-        title_font_size=30,  # Taille de la police du titre
+        title_font_size=25,  # Taille de la police du titre
         legend=dict(
             yanchor="top",
             y=-0,
@@ -174,10 +174,16 @@ def plot_dataframe(N, *args):
             x=0,
             font=dict(size=20)  # Taille de la police de la légende
         ),
-        xaxis_title=x.name  # Ajout de la légende de l'axe x
+        xaxis_title=x.name,  # Ajout de la légende de l'axe x
+        xaxis_tickfont=dict(size=25),  # Augmentation de la taille des marqueurs de l'axe x
+        yaxis_tickfont=dict(size=25),   # Augmentation de la taille des marqueurs de l'axe y
+        xaxis_title_font=dict(size=25),  # Augmentation de la taille de la police pour la légende de l'axe x
+        yaxis_title_font=dict(size=25)   # Augmentation de la taille de la police pour la légende de l'axe y
     )
 
     fig.show()
+
+
 
 
 

@@ -73,6 +73,12 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
         # Now you can use Time_ADCP or Time_PS for Time, they have the same interval
         Time = Time_ADCP
 
+    print("df_ADCP")
+    print(df_ADCP)
+    print()
+    print("df_PS")
+    print(df_PS)
+    
     #ADCP Sea pressure : IG signal and SS signal
     ADCP_sea_pressure_bandpass_filtred_signal_ig = butter_bandpass_filter(df_ADCP['Sea pressure'], fmin_ig, fmax_ig, fs_data)
     ADCP_sea_pressure_bandpass_filtred_signal_ig = ADCP_sea_pressure_bandpass_filtred_signal_ig - ADCP_sea_pressure_bandpass_filtred_signal_ig.mean()
@@ -82,7 +88,7 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     ADCP_sea_pressure_bandpass_filtred_signal_ss = ADCP_sea_pressure_bandpass_filtred_signal_ss - ADCP_sea_pressure_bandpass_filtred_signal_ss.mean()
     ADCP_sea_pressure_bandpass_filtred_signal_ss = pd.Series(ADCP_sea_pressure_bandpass_filtred_signal_ss, name=f'ADCP Sea pressure - SS bandpass filtred')
     
-    #ADCP AltimeterPressure : IG signal and SS signal
+    """#ADCP AltimeterPressure : IG signal and SS signal
     ADCP_altimeter_pressure_bandpass_filtred_signal_ig = butter_bandpass_filter(df_ADCP['AltimeterPressure'], fmin_ig, fmax_ig, fs_data)
     ADCP_altimeter_pressure_bandpass_filtred_signal_ig = ADCP_altimeter_pressure_bandpass_filtred_signal_ig - ADCP_altimeter_pressure_bandpass_filtred_signal_ig.mean()
     ADCP_altimeter_pressure_bandpass_filtred_signal_ig = pd.Series(ADCP_altimeter_pressure_bandpass_filtred_signal_ig, name=f'ADCP Altimeter pressure - IG bandpass filtred')
@@ -90,7 +96,7 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     ADCP_altimeter_pressure_bandpass_filtred_signal_ss = butter_bandpass_filter(df_ADCP['AltimeterPressure'], fmin_ss, fmax_ss, fs_data)
     ADCP_altimeter_pressure_bandpass_filtred_signal_ss = ADCP_altimeter_pressure_bandpass_filtred_signal_ss - ADCP_altimeter_pressure_bandpass_filtred_signal_ss.mean()
     ADCP_altimeter_pressure_bandpass_filtred_signal_ss = pd.Series(ADCP_altimeter_pressure_bandpass_filtred_signal_ss, name=f'ADCP Altimeter pressure - SS bandpass filtred')
-    
+    """
     #Pressure sensor : IG signal and SS signal
     ADCP_pressure_sensor_bandpass_filtred_signal_ig = butter_bandpass_filter(df_PS['Sea pressure'], fmin_ig, fmax_ig, fs_data)
     ADCP_pressure_sensor_bandpass_filtred_signal_ig = ADCP_pressure_sensor_bandpass_filtred_signal_ig - ADCP_pressure_sensor_bandpass_filtred_signal_ig.mean()
@@ -108,8 +114,8 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
 
     Sea_pressure_ADCP = df_ADCP['Sea pressure']
     Sea_pressure_ADCP = pd.Series(Sea_pressure_ADCP, name="Sea_pressure_ADCP")
-    Altimeter_pressure = df_ADCP['AltimeterPressure']
-    Altimeter_pressure = pd.Series(Altimeter_pressure, name="Altimeter_pressure")
+    """Altimeter_pressure = df_ADCP['AltimeterPressure']
+    Altimeter_pressure = pd.Series(Altimeter_pressure, name="Altimeter_pressure")"""
     Sea_pressure_PS = df_PS['Sea pressure']
     Sea_pressure_PS = pd.Series(Sea_pressure_PS, name="Sea_pressure_PS")
     
@@ -117,9 +123,10 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     Depth_ADCP = pd.Series(Depth_ADCP, name="Depth_ADCP")
     Depth_PS = df_PS['Depth']
     Depth_PS = pd.Series(Depth_PS, name="Depth_PS")
+    print(f"Epsilon L = {abs(Depth_ADCP.mean() -Depth_PS.mean() )}")
     
     df_signal_ADCP_Sea_pressure_name = "Sea pressure"
-    df_signal_ADCP_Altimeter_pressure_name = "Sea pressure"
+    #df_signal_ADCP_Altimeter_pressure_name = "Sea pressure"
     df_signal_PS_Sea_pressure_name = "Sea pressure"
 
     """mean_tide = df['tide'].mean()
@@ -132,54 +139,107 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     df_signal_ADCP_Sea_pressure = fourier_windows(df_ADCP, df_signal_ADCP_Sea_pressure_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
     print("--------------------df_signal_ADCP_Sea_pressure-------------------------")
     print(df_signal_ADCP_Sea_pressure)
-    df_signal_ADCP_Altimeter_pressure = fourier_windows(df_ADCP, df_signal_ADCP_Altimeter_pressure_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
+    """df_signal_ADCP_Altimeter_pressure = fourier_windows(df_ADCP, df_signal_ADCP_Altimeter_pressure_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
     print("---------------------df_signal_ADCP_Sea_pressure------------------------")
-    print(df_signal_ADCP_Altimeter_pressure)
-    df_signal_PS_Sea_pressure = fourier_windows(df_PS, df_signal_PS_Sea_pressure_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
+    print(df_signal_ADCP_Altimeter_pressure)"""
+    """df_signal_PS_Sea_pressure = fourier_windows(df_PS, df_signal_PS_Sea_pressure_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
     print("-------------------df_signal_PS_Sea_pressure--------------------------")
-    print(df_signal_PS_Sea_pressure)
+    print(df_signal_PS_Sea_pressure)"""
     
     spectre_dB_ADCP_Sea_pressure, freqs = compute_spectrum(df_ADCP, df_signal_ADCP_Sea_pressure_name, fe)
     spectre_dB_ADCP_Sea_pressure = pd.Series(spectre_dB_ADCP_Sea_pressure, name="spectre_dB_ADCP_Sea_pressure")
-    spectre_dB_ADCP_Altimeter_pressure, freqs = compute_spectrum(df_ADCP, df_signal_ADCP_Altimeter_pressure_name, fe)
-    spectre_dB_ADCP_Altimeter_pressure = pd.Series(spectre_dB_ADCP_Altimeter_pressure, name="spectre_dB_ADCP_Altimeter_pressure")
-    spectre_dB_PS_Sea_pressure, freqs = compute_spectrum(df_PS, df_signal_PS_Sea_pressure_name, fe)
-    spectre_dB_PS_Sea_pressure = pd.Series(spectre_dB_PS_Sea_pressure, name="spectre_dB_PS_Sea_pressure")
+    #spectre_dB_ADCP_Altimeter_pressure, freqs = compute_spectrum(df_ADCP, df_signal_ADCP_Altimeter_pressure_name, fe)
+    #spectre_dB_ADCP_Altimeter_pressure = pd.Series(spectre_dB_ADCP_Altimeter_pressure, name="spectre_dB_ADCP_Altimeter_pressure")
+    #spectre_dB_PS_Sea_pressure, freqs = compute_spectrum(df_PS, df_signal_PS_Sea_pressure_name, fe)
+    #spectre_dB_PS_Sea_pressure = pd.Series(spectre_dB_PS_Sea_pressure, name="spectre_dB_PS_Sea_pressure")
 
     Hm0_IG_Sea_pressure = df_signal_ADCP_Sea_pressure['Hm0,IG']
-    Hm0_IG_Sea_pressure = pd.Series(Hm0_IG_Sea_pressure, name="Hm0_IG_Sea_pressure")
+    Hm0_IG_Sea_pressure = pd.Series(Hm0_IG_Sea_pressure, name="Hm0_IG_ADCP_Sea_pressure")
     Hm0_SS_Sea_pressure  = df_signal_ADCP_Sea_pressure['Hm0,SS']
-    Hm0_SS_Sea_pressure = pd.Series(Hm0_SS_Sea_pressure, name="Hm0_SS_Sea_pressure")
+    Hm0_SS_Sea_pressure = pd.Series(Hm0_SS_Sea_pressure, name="Hm0_SS_ADCP_Sea_pressure")
     Hm0_total_Sea_pressure  = df_signal_ADCP_Sea_pressure['Hm0,total']
-    Hm0_total_Sea_pressure = pd.Series(Hm0_total_Sea_pressure, name="Hm0_total_Sea_pressure")
+    Hm0_total_Sea_pressure = pd.Series(Hm0_total_Sea_pressure, name="Hm0_total_ADCP_Sea_pressure")
     
-    Hm0_IG_Altimeter_pressure = df_signal_ADCP_Altimeter_pressure['Hm0,IG']
+    print(f"IG and SS waves on ADCP delta in m : {abs(Hm0_IG_Sea_pressure.mean() - Hm0_SS_Sea_pressure.mean())} m")
+
+    
+    """Hm0_IG_Altimeter_pressure = df_signal_ADCP_Altimeter_pressure['Hm0,IG']
     Hm0_IG_Altimeter_pressure = pd.Series(Hm0_IG_Altimeter_pressure, name="Hm0_IG_Altimeter_pressure")
     Hm0_SS_Altimeter_pressure = df_signal_ADCP_Altimeter_pressure['Hm0,SS']
     Hm0_SS_Altimeter_pressure = pd.Series(Hm0_SS_Altimeter_pressure, name="Hm0_SS_Altimeter_pressure")
     Hm0_total_Altimeter_pressure = df_signal_ADCP_Altimeter_pressure['Hm0,total']
-    Hm0_total_Altimeter_pressure = pd.Series(Hm0_total_Altimeter_pressure, name="Hm0_total_Altimeter_pressure")
+    Hm0_total_Altimeter_pressure = pd.Series(Hm0_total_Altimeter_pressure, name="Hm0_total_Altimeter_pressure")"""
     
-    Hm0_IG_PS_Sea_pressure = df_signal_PS_Sea_pressure['Hm0,IG']
+    """Hm0_IG_PS_Sea_pressure = df_signal_PS_Sea_pressure['Hm0,IG']
     Hm0_IG_PS_Sea_pressure = pd.Series(Hm0_IG_PS_Sea_pressure, name="Hm0_IG_PS_Sea_pressure")
     Hm0_SS_PS_Sea_pressure = df_signal_PS_Sea_pressure['Hm0,SS']
     Hm0_SS_PS_Sea_pressure = pd.Series(Hm0_SS_PS_Sea_pressure, name="Hm0_SS_PS_Sea_pressure")
-    Hm0_total_PS_Sea_pressure = df_signal_PS_Sea_pressure['Hm0,total']
+    Hm0_total_PS_Sea_pressure = df_signal_PS_Sea_pressure['Hm0,total']""
     Hm0_total_PS_Sea_pressure = pd.Series(Hm0_total_PS_Sea_pressure, name="Hm0_total_PS_Sea_pressure")
+    
+    print(f"IG and SS waves on PS delta in m : {abs(Hm0_IG_PS_Sea_pressure.mean() - Hm0_SS_PS_Sea_pressure.mean())} m")"""
+    
+    Energy_IG_ADCP_Hm0 = Hm0_IG_Sea_pressure**2
+    Energy_IG_ADCP_Hm0 = pd.Series(Energy_IG_ADCP_Hm0, name="Energy_IG_ADCP_Hm0")
+    time_min_IG = 90 #1min30 
+    time_max_IG = 300 #5min
+    time_mean = int((time_min_IG + time_max_IG)/2)
+    
+    windows_min = time_min_IG * fe
+    windows_max = time_max_IG * fe
+    windows_mean = time_mean * fe
+    
+    df_signal_ADCP_Sea_pressure['Energy_IG_ADCP_Hm0_mooving_average_1min30_twice'] = None
+    
+    Energy_IG_ADCP_Hm0_mooving_average_1min30 = Energy_IG_ADCP_Hm0.rolling(window=windows_min, center=True).mean()
+    Energy_IG_ADCP_Hm0_mooving_average_1min30 = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_1min30, name="Energy_IG_ADCP_Hm0_mooving_average_1min30")
+    
+    Energy_IG_ADCP_Hm0_mooving_average_1min30_twice = Energy_IG_ADCP_Hm0_mooving_average_1min30.rolling(window=windows_min, center=True).mean()
+    Energy_IG_ADCP_Hm0_mooving_average_1min30_twice = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_1min30_twice, name="Energy_IG_ADCP_Hm0_mooving_average_1min30_twice")
+    df_signal_ADCP_Sea_pressure['Energy_IG_ADCP_Hm0_mooving_average_1min30_twice'] = Energy_IG_ADCP_Hm0_mooving_average_1min30_twice
+    
+    Energy_IG_ADCP_Hm0_mooving_average_3min = Energy_IG_ADCP_Hm0.rolling(window=windows_mean, center=True).mean()
+    Energy_IG_ADCP_Hm0_mooving_average_3min = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_3min, name="Energy_IG_ADCP_Hm0_mooving_average_3min")
+    
+    Energy_IG_ADCP_Hm0_mooving_average_5min = Energy_IG_ADCP_Hm0.rolling(window=windows_max, center=True).mean()
+    Energy_IG_ADCP_Hm0_mooving_average_5min = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_5min, name="Energy_IG_ADCP_Hm0_mooving_average_5min")
+    
+    Energy_IG_ADCP_Hm0_mooving_average_5min_twice = Energy_IG_ADCP_Hm0_mooving_average_5min.rolling(window=windows_mean, center=True).mean()
+    Energy_IG_ADCP_Hm0_mooving_average_5min_twice = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_5min_twice, name="Energy_IG_ADCP_Hm0_mooving_average_5min_twice")
+    
+    df_signal_ADCP_Sea_pressure = df_signal_ADCP_Sea_pressure.iloc[1200:-1200]
+    
+    
+    # Energie of the Waves (IG and SS)
+    plot_dataframe(N, 
+                   [(Time,Energy_IG_ADCP_Hm0, Energy_IG_ADCP_Hm0_mooving_average_1min30,Energy_IG_ADCP_Hm0_mooving_average_3min, Energy_IG_ADCP_Hm0_mooving_average_1min30_twice ),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    # waves detection
+    plot_dataframe(N, 
+                   [(Time,Energy_IG_ADCP_Hm0_mooving_average_1min30_twice, Energy_IG_ADCP_Hm0_mooving_average_5min_twice),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    """Energy_SS_ADCP_Hm0 = Hm0_SS_Sea_pressure**2
+    Energy_SS_ADCP_Hm0 = pd.Series(Energy_SS_ADCP_Hm0, name="Energy_SS_ADCP_Hm0")
+    Energy_IG_PS_Hm0 = Hm0_IG_PS_Sea_pressure**2
+    Energy_IG_PS_Hm0 = pd.Series(Energy_IG_PS_Hm0, name="Energy_IG_PS_Hm0")
+    Energy_SS_PS_Hm0 = Hm0_SS_PS_Sea_pressure**2
+    Energy_SS_PS_Hm0 = pd.Series(Energy_SS_PS_Hm0, name="Energy_SS_PS_Hm0")"""
     
     """frequency_IG = df['frequency,IG']
     frequency_SS = df['frequency,SS']
     energy_IG = df['energy,IG']
     energy_SS = df['energy,SS']"""
     
-    #Temperature
+"""#Temperature
     plot_dataframe(N, 
                    [(Time,Temperature_ADCP,Temperature_PS),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
     #Pressure (signal)
     plot_dataframe(N, 
-                   [(Time,Sea_pressure_ADCP,Altimeter_pressure,Sea_pressure_PS),
+                   [(Time,Sea_pressure_ADCP,Sea_pressure_PS),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
     #Depth
@@ -189,37 +249,28 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     
     #Spetre (Amplitude in dB)
     plot_dataframe(N, 
-                   [(freqs,spectre_dB_ADCP_Sea_pressure,spectre_dB_ADCP_Altimeter_pressure, spectre_dB_PS_Sea_pressure),
+                   [(freqs,spectre_dB_ADCP_Sea_pressure, spectre_dB_PS_Sea_pressure),
                     (freqs.min(),freqs.max()),
                     (fmin_ig, fmax_ig, 'Infra gravity waves interval'), 
                     (fmin_ss,fmax_ss, 'Sea swell waves interval')])
     #All Hm0
     plot_dataframe(N, 
-                   [(Time,Hm0_IG_Sea_pressure,Hm0_IG_Altimeter_pressure, Hm0_IG_PS_Sea_pressure, 
-                     Hm0_SS_Sea_pressure,Hm0_SS_Altimeter_pressure, Hm0_SS_PS_Sea_pressure,
-                     Hm0_total_Sea_pressure,Hm0_total_Altimeter_pressure, Hm0_total_PS_Sea_pressure),
+                   [(Time,Hm0_IG_Sea_pressure, Hm0_IG_PS_Sea_pressure, 
+                     Hm0_SS_Sea_pressure, Hm0_SS_PS_Sea_pressure),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
-    #-------------------------------------------------------------------------------------------------------------------
-    """plot_dataframe(df, N, 
-                   [(Time,Hm0_IG,Hm0_SS,Hm0_total),
-                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5)), 
-                    (Time.min()+timedelta(minutes=15),Time.min()+timedelta(minutes=30), 'ig waves interval'), 
-                    (Time.max()-timedelta(minutes=30),Time.max()-timedelta(minutes=15), 'sea swell waves interval')])
-                    
-        
-    #Hm0 IG waves (wwaves mesure in m)
+    #Hm0 précision entre ADCP et PS : IG 
     plot_dataframe(N, 
-                   [(Time,Hm0_IG_Sea_pressure,Hm0_IG_Altimeter_pressure, Hm0_IG_PS_Sea_pressure),
+                   [(Time,Hm0_IG_Sea_pressure, Hm0_IG_PS_Sea_pressure),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
-    
-    #Hm0 SS waves (wwaves mesure in m)
+    print(f"taux d'erreur entre ADCP et PS par rapport à ADCP pour IG waves : {(abs(Hm0_IG_PS_Sea_pressure.mean() - Hm0_IG_Sea_pressure.mean())/Hm0_IG_Sea_pressure.mean())*100} %")
+    print(f"taux d'erreur entre ADCP et PS par rapport à ADCP pour IG waves : {(abs(Hm0_IG_PS_Sea_pressure.mean() - Hm0_IG_Sea_pressure.mean())/Hm0_IG_PS_Sea_pressure.mean())*100} %")
+    #Hm0 précision entre ADCP et PS : SS
     plot_dataframe(N, 
-                   [(Time,Hm0_SS_Sea_pressure,Hm0_SS_Altimeter_pressure, Hm0_SS_PS_Sea_pressure),
+                   [(Time, 
+                     Hm0_SS_Sea_pressure, Hm0_SS_PS_Sea_pressure),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
-    
-    #Hm0 total waves (wwaves mesure in m)
-    plot_dataframe(N, 
-                   [(Time,Hm0_total_Sea_pressure,Hm0_total_Altimeter_pressure, Hm0_total_PS_Sea_pressure),
-                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])"""
+    print(f"taux d'erreur entre ADCP et PS par rapport à ADCP pour SS waves : {(abs(Hm0_SS_PS_Sea_pressure.mean() - Hm0_SS_Sea_pressure.mean())/Hm0_SS_Sea_pressure.mean())*100} %")
+    print(f"taux d'erreur entre ADCP et PS par rapport à PS pour SS waves : {(abs(Hm0_SS_PS_Sea_pressure.mean() - Hm0_SS_Sea_pressure.mean())/Hm0_SS_PS_Sea_pressure.mean())*100} %")
+   """
 
