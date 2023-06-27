@@ -11,6 +11,7 @@ import matplotlib.pyplot as plt
 from plotly.subplots import make_subplots
 import numpy as np
 import random
+from scipy.signal import hilbert
 
 # Ajouter le chemin du dossier grand-parent (le dossier principal V0)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -105,20 +106,7 @@ def subplot_dataframe(df, N, *args):
 
     fig.show()
     
-def plot_dataframe(N, *args):
-    """if 'DateTime' in df.columns:
-        df['DateTime'] = pd.to_datetime(df['DateTime'], format='%m/%d/%Y %H:%M:%S')
-    elif 'Time' in df.columns:
-        df['Time'] = pd.to_datetime(df['Time'], format='%m/%d/%Y %H:%M:%S')
-    else:
-        print("No suitable column for conversion to DateTime found.")
-
-    time_column = next((col for col in df.columns if df[col].dtype == 'datetime64[ns]'), None)
-
-    if time_column is None:
-        print("Aucune colonne de type datetime trouvée.")
-        return"""
-
+def plot_dataframe(N, y_legend_name, *args):
     fig = go.Figure()
 
     # Create a list to hold the names of all y traces for the title
@@ -155,8 +143,8 @@ def plot_dataframe(N, *args):
             # Add invisible trace for the legend
             fig.add_trace(go.Scatter(
                 x=[None], y=[None],
-                mode='markers+text',  # Utilisation du mode 'markers+text' pour afficher la forme personnalisée
-                marker=dict(size=10, color=line_color, symbol='square'),  # Utilisation du symbole 'square' pour les marqueurs
+                mode='markers+text',
+                marker=dict(size=10, color=line_color, symbol='square'),
                 showlegend=True,
                 name=name
             ))
@@ -166,28 +154,24 @@ def plot_dataframe(N, *args):
 
     fig.update_layout(
         title_text=title_text,
-        title_font_size=25,  # Taille de la police du titre
+        title_font_size=25,
         legend=dict(
             yanchor="top",
             y=-0,
             xanchor="left",
             x=0,
-            font=dict(size=20)  # Taille de la police de la légende
+            font=dict(size=20)
         ),
-        xaxis_title=x.name,  # Ajout de la légende de l'axe x
-        xaxis_tickfont=dict(size=25),  # Augmentation de la taille des marqueurs de l'axe x
-        yaxis_tickfont=dict(size=25),   # Augmentation de la taille des marqueurs de l'axe y
-        xaxis_title_font=dict(size=25),  # Augmentation de la taille de la police pour la légende de l'axe x
-        yaxis_title_font=dict(size=25)   # Augmentation de la taille de la police pour la légende de l'axe y
+        xaxis_title=x.name,
+        yaxis_title=y_legend_name,  # Ajout du nom de la légende de l'axe Y
+        xaxis_tickfont=dict(size=25),
+        yaxis_tickfont=dict(size=25),
+        xaxis_title_font=dict(size=25),
+        yaxis_title_font=dict(size=25)
     )
 
     fig.show()
 
-
-
-
-
-    
 def plot_dataframe_columns(df):
     # Chercher la première colonne qui est de type datetime
     if 'DateTime' in df.columns:
@@ -226,10 +210,55 @@ def plot_dataframe_columns(df):
     )
 
     fig.show()
+    
+def compute_envelope(signal, window_size):
+    """
+    Compute the lower and upper envelope of a signal by taking the rolling
+    minimum and maximum over a window of a specified size.
+    """
+    signal_series = pd.Series(signal)
+    lower_envelope = signal_series.rolling(window_size, center=True).min()
+    upper_envelope = signal_series.rolling(window_size, center=True).max()
 
+    return lower_envelope, upper_envelope
 
+def plot_envelopes(signal1, signal2, sampling_rate, window_size):
+    # Calculate the envelopes of the signals
+    lower1, upper1 = compute_envelope(signal1, window_size)
+    lower2, upper2 = compute_envelope(signal2, window_size)
 
+    # Create an array for time which we'll use for plotting
+    time = np.arange(len(signal1)) / sampling_rate
 
+    # Create the figure
+    fig = go.Figure()
 
+    # Add traces for Signal 1 and its envelope
+    #fig.add_trace(go.Scatter(x=time, y=signal1, mode='lines', name='Signal 1'))
+    fig.add_trace(go.Scatter(x=time, y=lower1, mode='lines', name='Lower'+signal1.name, line=dict(dash='dash')))
+    #fig.add_trace(go.Scatter(x=time, y=upper1, mode='lines', name='Upper'+signal1.name, line=dict(dash='dash')))
 
+    # Add traces for Signal 2 and its envelope
+    #fig.add_trace(go.Scatter(x=time, y=signal2, mode='lines', name='Signal 2'))
+    fig.add_trace(go.Scatter(x=time, y=lower2, mode='lines', name='Lower'+signal2.name, line=dict(dash='dash')))
+    #fig.add_trace(go.Scatter(x=time, y=upper2, mode='lines', name='Upper'+signal2.name, line=dict(dash='dash')))
 
+    fig.update_layout(
+        title_text='Signal comparison with envelopes',
+        title_font_size=25,  # Taille de la police du titre
+        legend=dict(
+            yanchor="top",
+            y=-0,
+            xanchor="left",
+            x=0,
+            font=dict(size=20)  # Taille de la police de la légende
+        ),
+        xaxis_title='Time (s)',  # Ajout de la légende de l'axe x
+        yaxis_title='Amplitude (dBar) ',  # Ajout de la légende de l'axe y
+        xaxis_tickfont=dict(size=25),  # Augmentation de la taille des marqueurs
+        yaxis_tickfont=dict(size=25),   # Augmentation de la taille des marqueurs de l'axe y
+        xaxis_title_font=dict(size=25),  # Augmentation de la taille de la police pour la légende de l'axe x
+        yaxis_title_font=dict(size=25)   # Augmentation de la taille de la police pour la légende de l'axe y
+    )
+
+    fig.show()

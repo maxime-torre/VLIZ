@@ -10,15 +10,16 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Plots_datas.plots_dataframe import plot_dataframe
+from Plots_datas.plots_dataframe import plot_dataframe,plot_envelopes
 from Process_Datas.compute_spectrum import compute_spectrum
-from Process_Datas.butter_lowpass_filter import butter_bandpass_filter
+from Process_Datas.butter_lowpass_filter import butter_bandpass_filter, high_pass_filter
 from Read_Datas.read_pickle_to_df import read_pickle_to_df
 from Process_Datas.add_waves_description_columns import fourier_windows
 from tqdm import tqdm
+import numpy as np
 
 
-def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data, fe, N, seconds, fe_ig, fe_ss):
+def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data, fe, N, seconds, fe_ig, fe_ss, cutoff):
     """base_path, extension = os.path.splitext(excel_file_path)
 
     # Ajouter "_process_data" au chemin de base, puis ajouter l'extension de retour
@@ -114,16 +115,21 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
 
     Sea_pressure_ADCP = df_ADCP['Sea pressure']
     Sea_pressure_ADCP = pd.Series(Sea_pressure_ADCP, name="Sea_pressure_ADCP")
-    """Altimeter_pressure = df_ADCP['AltimeterPressure']
-    Altimeter_pressure = pd.Series(Altimeter_pressure, name="Altimeter_pressure")"""
+    AST_pressure_ADCP = df_ADCP['AltimeterPressure']
+    AST_pressure_ADCP = pd.Series(AST_pressure_ADCP, name="AST_pressure_ADCP")
     Sea_pressure_PS = df_PS['Sea pressure']
     Sea_pressure_PS = pd.Series(Sea_pressure_PS, name="Sea_pressure_PS")
+    
+    Sea_pressure_PS_centred = Sea_pressure_PS - abs(AST_pressure_ADCP.mean() -Sea_pressure_PS.mean())
+    Sea_pressure_PS_centred = pd.Series(Sea_pressure_PS_centred, name="Sea_pressure_PS_centred")
     
     Depth_ADCP = df_ADCP['AltimeterDistanceAST']
     Depth_ADCP = pd.Series(Depth_ADCP, name="Depth_ADCP")
     Depth_PS = df_PS['Depth']
     Depth_PS = pd.Series(Depth_PS, name="Depth_PS")
     print(f"Epsilon L = {abs(Depth_ADCP.mean() -Depth_PS.mean() )}")
+    
+    print(f"Epsilon Pressue between ADCP and PS = {abs(AST_pressure_ADCP.mean() -Sea_pressure_PS.mean() )}")
     
     df_signal_ADCP_Sea_pressure_name = "Sea pressure"
     #df_signal_ADCP_Altimeter_pressure_name = "Sea pressure"
@@ -191,7 +197,7 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     
     df_signal_ADCP_Sea_pressure['Energy_IG_ADCP_Hm0_mooving_average_1min30_twice'] = None
     
-    Energy_IG_ADCP_Hm0_mooving_average_1min30 = Energy_IG_ADCP_Hm0.rolling(window=windows_min, center=True).mean()
+    """Energy_IG_ADCP_Hm0_mooving_average_1min30 = Energy_IG_ADCP_Hm0.rolling(window=windows_min, center=True).mean()
     Energy_IG_ADCP_Hm0_mooving_average_1min30 = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_1min30, name="Energy_IG_ADCP_Hm0_mooving_average_1min30")
     
     Energy_IG_ADCP_Hm0_mooving_average_1min30_twice = Energy_IG_ADCP_Hm0_mooving_average_1min30.rolling(window=windows_min, center=True).mean()
@@ -205,20 +211,78 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     Energy_IG_ADCP_Hm0_mooving_average_5min = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_5min, name="Energy_IG_ADCP_Hm0_mooving_average_5min")
     
     Energy_IG_ADCP_Hm0_mooving_average_5min_twice = Energy_IG_ADCP_Hm0_mooving_average_5min.rolling(window=windows_mean, center=True).mean()
-    Energy_IG_ADCP_Hm0_mooving_average_5min_twice = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_5min_twice, name="Energy_IG_ADCP_Hm0_mooving_average_5min_twice")
+    Energy_IG_ADCP_Hm0_mooving_average_5min_twice = pd.Series(Energy_IG_ADCP_Hm0_mooving_average_5min_twice, name="Energy_IG_ADCP_Hm0_mooving_average_5min_twice")"""
     
     df_signal_ADCP_Sea_pressure = df_signal_ADCP_Sea_pressure.iloc[1200:-1200]
     
+    df_PS['Sea_pressure_PS_centred'] = np.nan
+    df_PS['Sea_pressure_PS_centred'] = Sea_pressure_PS_centred
     
-    # Energie of the Waves (IG and SS)
-    plot_dataframe(N, 
-                   [(Time,Energy_IG_ADCP_Hm0, Energy_IG_ADCP_Hm0_mooving_average_1min30,Energy_IG_ADCP_Hm0_mooving_average_3min, Energy_IG_ADCP_Hm0_mooving_average_1min30_twice ),
+    df_PS_shift = df_PS.copy()
+    df_PS_shift.set_index('Time', inplace=True)
+    df_PS_shift['Sea_pressure_PS_centred'] = df_PS_shift['Sea_pressure_PS_centred'].shift(+22)
+    df_PS_shift.reset_index(inplace=True)
+    
+    # Utiliser la fonction loc pour filtrer les lignes contenant NaN dans la colonne spécifiée
+    nan_rows_time = df_PS_shift.loc[df_PS_shift['Time'].isna()]
+    # Imprimer les lignes contenant NaN dans la colonne spécifiée
+    print("Nan dans la colonne Time")
+    print(nan_rows_time)
+    
+    # Utiliser la fonction loc pour filtrer les lignes contenant NaN dans la colonne spécifiée
+    nan_rows_pressure= df_PS_shift.loc[df_PS_shift['Sea_pressure_PS_centred'].isna()]
+    # Imprimer les lignes contenant NaN dans la colonne spécifiée
+    print("Nan dans la colonne Sea_pressure_PS_centred")
+    print(nan_rows_pressure)
+    
+    #df_ADCP['Sea pressure']
+    
+    # Calcule le coefficient de corrélation de Pearson
+    correlation_coefficient = np.corrcoef(AST_pressure_ADCP, Sea_pressure_PS)[0, 1]
+    print(f"correlation_coefficient : {correlation_coefficient}")
+    
+        # Créer une copie de AST_pressure_ADCP et df_PS_shift['Sea_pressure_PS_centred']
+    AST_pressure_ADCP_copy = AST_pressure_ADCP.copy()
+    Sea_pressure_PS_centred_copy = df_PS_shift['Sea_pressure_PS_centred'].copy()
+
+    # Supprimer les NaN des deux séries
+    AST_pressure_ADCP_copy = AST_pressure_ADCP_copy.dropna()
+    Sea_pressure_PS_centred_copy = Sea_pressure_PS_centred_copy.dropna()
+
+    # Gardez uniquement les valeurs où les deux séries ont des données
+    common_index = AST_pressure_ADCP_copy.index.intersection(Sea_pressure_PS_centred_copy.index)
+    AST_pressure_ADCP_copy = AST_pressure_ADCP_copy.loc[common_index]
+    Sea_pressure_PS_centred_copy = Sea_pressure_PS_centred_copy.loc[common_index]
+
+    # Maintenant, calculez la corrélation
+    correlation_coefficient_df_PS_shift = np.corrcoef(AST_pressure_ADCP_copy, Sea_pressure_PS_centred_copy)[0, 1]
+    print(f"correlation_coefficient_df_PS_shift : {correlation_coefficient_df_PS_shift}")
+    
+    #Eliminate the Tide :
+    AST_pressure_ADCP_copy_without_tide = high_pass_filter(AST_pressure_ADCP_copy, cutoff, fe)
+    Sea_pressure_PS_centred_copy_without_tide = high_pass_filter(Sea_pressure_PS_centred_copy, cutoff, fe)
+    
+    
+    
+    plot_envelopes(AST_pressure_ADCP_copy,  Sea_pressure_PS_centred_copy, fe, fe)
+    
+    #Sea Pressure PS vs AST pressure from ADCP (signal)
+    plot_dataframe(N, "Sea Pressure (dBar)" ,
+                   [(Time,AST_pressure_ADCP,Sea_pressure_PS),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
-    # waves detection
-    plot_dataframe(N, 
-                   [(Time,Energy_IG_ADCP_Hm0_mooving_average_1min30_twice, Energy_IG_ADCP_Hm0_mooving_average_5min_twice),
+    #Sea Pressure PS centred vs AST pressure from ADCP with tide
+    plot_dataframe(N, "Sea Pressure centred with tide (dBar)" ,
+                   [(Time,AST_pressure_ADCP_copy,Sea_pressure_PS_centred_copy),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    #Sea Pressure PS centred vs AST pressure from ADCP without tide
+    plot_dataframe(N, "Sea Pressure centred without tide (dBar)" ,
+                   [(Time,AST_pressure_ADCP_copy_without_tide,Sea_pressure_PS_centred_copy_without_tide),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    
+    
     
     """Energy_SS_ADCP_Hm0 = Hm0_SS_Sea_pressure**2
     Energy_SS_ADCP_Hm0 = pd.Series(Energy_SS_ADCP_Hm0, name="Energy_SS_ADCP_Hm0")
@@ -232,14 +296,20 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     energy_IG = df['energy,IG']
     energy_SS = df['energy,SS']"""
     
-"""#Temperature
+"""
+# Energie of the Waves (IG and SS)
+    plot_dataframe(N,  "Energy of the wave",
+                   [(Time,Energy_IG_ADCP_Hm0, Energy_IG_ADCP_Hm0_mooving_average_1min30,Energy_IG_ADCP_Hm0_mooving_average_3min, Energy_IG_ADCP_Hm0_mooving_average_1min30_twice ),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+
+#Temperature
     plot_dataframe(N, 
                    [(Time,Temperature_ADCP,Temperature_PS),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
-    #Pressure (signal)
+    # waves detection
     plot_dataframe(N, 
-                   [(Time,Sea_pressure_ADCP,Sea_pressure_PS),
+                   [(Time,Energy_IG_ADCP_Hm0_mooving_average_1min30_twice, Energy_IG_ADCP_Hm0_mooving_average_5min_twice),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
     #Depth

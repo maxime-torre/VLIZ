@@ -2,6 +2,7 @@ import sys
 import os
 import pandas as pd
 from scipy.signal import butter,filtfilt
+import inspect
 
 # Ajouter le chemin du dossier grand-parent (le dossier principal V0)
 current_dir = os.path.dirname(os.path.abspath(__file__))
@@ -43,11 +44,22 @@ def low_pass_filter(data, cutoff, fs, order=5):
     normal_cutoff = cutoff / nyq
     b, a = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False)
     y = scipy.signal.lfilter(b, a, data)
-    return y
+    
+    # Obtenir le nom de la variable d'entrée
+    caller_frame = inspect.currentframe().f_back
+    data_name = list(caller_frame.f_locals.keys())[0]
+    
+    return pd.Series(y, index=data.index, name=data_name)
 
 def high_pass_filter(data, cutoff, fs, order=5):
     nyq = 0.5 * fs  # Fréquence de Nyquist
     normal_cutoff = cutoff / nyq
     b, a = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False)
     y = scipy.signal.lfilter(b, a, data)
-    return y
+    
+    # Obtenir le nom de la variable d'entrée
+    caller_frame = inspect.currentframe().f_back
+    data_name = list(caller_frame.f_locals.keys())[0]
+    
+    return pd.Series(y, index=data.index, name=data_name)
+

@@ -50,5 +50,5 @@ pickle_path_file_ADCP = parameters.pickle_path_file_ADCP
 pickle_path_file_Pressure_sensor = parameters.pickle_path_file_Pressure_sensor
 
 
-plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data_adcp_all, fe, N,  seconds, fe_ig, fe_ss)
+plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data_adcp_all, fe, N,  seconds, fe_ig, fe_ss, cutoff)
 
