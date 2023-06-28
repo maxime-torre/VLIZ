@@ -39,27 +39,19 @@ def butter_bandpass_filter(dataset, lowcut, highcut, fs, order=2):
 
 import scipy.signal
 
-def low_pass_filter(data, cutoff, fs, order=5):
+def low_pass_filter(data, data_name, cutoff, fs, order=2):
     nyq = 0.5 * fs  # Fréquence de Nyquist
     normal_cutoff = cutoff / nyq
     b, a = scipy.signal.butter(order, normal_cutoff, btype='low', analog=False)
     y = scipy.signal.lfilter(b, a, data)
     
-    # Obtenir le nom de la variable d'entrée
-    caller_frame = inspect.currentframe().f_back
-    data_name = list(caller_frame.f_locals.keys())[0]
-    
     return pd.Series(y, index=data.index, name=data_name)
 
-def high_pass_filter(data, cutoff, fs, order=5):
+def high_pass_filter(data, data_name, cutoff, fs, order=2):
     nyq = 0.5 * fs  # Fréquence de Nyquist
     normal_cutoff = cutoff / nyq
     b, a = scipy.signal.butter(order, normal_cutoff, btype='high', analog=False)
     y = scipy.signal.lfilter(b, a, data)
-    
-    # Obtenir le nom de la variable d'entrée
-    caller_frame = inspect.currentframe().f_back
-    data_name = list(caller_frame.f_locals.keys())[0]
     
     return pd.Series(y, index=data.index, name=data_name)
 

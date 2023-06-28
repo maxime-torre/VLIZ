@@ -262,3 +262,25 @@ def plot_envelopes(signal1, signal2, sampling_rate, window_size):
     )
 
     fig.show()
+    
+    
+import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
+import numpy as np
+
+def plot_3d_spectrum(spectrum, freqs, depth):
+    freqs_mesh, depth_mesh = np.meshgrid(freqs, depth)
+
+    fig = plt.figure(figsize=(12, 8))  # ajuster la taille de la figure
+    ax = fig.add_subplot(111, projection='3d')  # ajouter un subplot 3D
+
+    surface = ax.plot_surface(freqs_mesh, depth_mesh, spectrum, cmap='viridis')  # tracer la surface
+
+    ax.set_xlabel('Frequency (Hz)', fontsize=15)
+    ax.set_ylabel('Depth (m)', fontsize=15)
+    ax.set_zlabel('Spectrum Amplitude (dB)', fontsize=15)
+    ax.set_title('3D Spectrum plot', fontsize=25)
+
+    fig.colorbar(surface)  # ajouter une barre de couleur pour la surface
+
+    plt.show()

@@ -18,7 +18,7 @@ pickle_all_adcp_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_
 pickle_path_file_ADCP = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\ADCP\\S102377A024_Test_RBR_Q3B0_1_process_data.pkl"
 pickle_path_file_Pressure_sensor = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\PRESSURE SENSOR\\210961_20220902_1748_process_data.pkl"
 
-N = 50000
+N = 400000
 
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 2
