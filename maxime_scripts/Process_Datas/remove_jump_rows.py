@@ -37,7 +37,7 @@ def remove_jump_rows(df, column, threshold, fs):
         df_clean = df.loc[start_index:end_index]
 
     # Supprimer la colonne dérivée
-    #df_clean = df_clean.drop(columns=['derivative'])
+    df_clean = df_clean.drop(columns=['derivative'])
 
     return df_clean
 

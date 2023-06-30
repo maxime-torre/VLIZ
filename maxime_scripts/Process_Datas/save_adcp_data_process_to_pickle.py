@@ -31,7 +31,7 @@ def save_adcp_data_process_to_pickle(adcp_file_path, threshold, fs):
     
     return df
 
-def process_adcp_excel_files(directory_path, threshold, fs, display = True):
+def process_adcp_excel_files(directory_path, display = True):
     # Initialiser un dictionnaire pour stocker les DataFrame
     dfs = {}
 
@@ -45,7 +45,7 @@ def process_adcp_excel_files(directory_path, threshold, fs, display = True):
             # Lire le fichier Excel en DataFrame
             df = read_semicolon_separated_csv(file_path)
 
-            df = df.loc[:, ['DateTime', 'Temperature', 'Pressure', 'AltimeterPressure', 'AltimeterDistanceAST']]
+            df = df.loc[:, ['DateTime', 'Temperature', 'Pressure', 'AltimeterPressure', 'AltimeterDistanceAST', 'Pitch', 'Roll']]
             df = df.rename(columns={'DateTime': 'Time'})
             df = df.rename(columns={'Pressure': 'Sea pressure'})            
             if display :
@@ -63,10 +63,13 @@ def process_adcp_excel_files(directory_path, threshold, fs, display = True):
 
     return dfs
 
-def concatenate_dataframes(pickle_path, threshold, fs):
+def concatenate_dataframes(pickle_path,date_debut, date_end_exclu):
     # Ouvrir le fichier pickle et charger le dictionnaire de DataFrame
     with open(pickle_path, "rb") as f:
         dfs = pickle.load(f)
+    
+    base_path, extension = os.path.splitext(pickle_path)
+    new_path = base_path + "_processed" + ".pkl"
 
     # Obtenir une liste des clés du dictionnaire (noms des fichiers) triées
     keys = sorted(dfs.keys())
@@ -78,24 +81,86 @@ def concatenate_dataframes(pickle_path, threshold, fs):
     for key in keys:
         # Ajouter le DataFrame à la liste
         df_list.append(dfs[key])
+        print(dfs[key])
 
     # Concaténer les DataFrame
     df = pd.concat(df_list)
-    df_reset  = df.reset_index(drop=True)
+    """df_reset  = df.reset_index(drop=True)
     print(df_reset)
     df_reset = remove_jump_rows(df_reset, df_reset['Sea pressure'], threshold, fs)
-    df_reset  = df_reset.reset_index(drop=True)
+    df_reset  = df_reset.reset_index(drop=True)"""
+    print(df)
+    df_reset  = df.reset_index(drop=True)
     print(df_reset)
 
-    # Assurer qu'il n'y a pas de recouvrement ou de perte de données
-    # en ré-échantillonnant les données pour qu'elles correspondent à la fréquence d'échantillonnage spécifiée
-    #df = df.resample(f'{1/fe}S', on='Time').mean().reset_index()
+    # Enregistrer le DataFrame global en fichier pickle    
+    df_reset['Time'] = pd.to_datetime(df_reset['Time'])
+    df_reset = df_reset.loc[(df_reset['Time'] >= date_debut)]
+    df_reset = df_reset.loc[(df_reset['Time'] < date_end_exclu)]
 
-    # Construire le chemin du nouveau fichier pickle
-    base_path, extension = os.path.splitext(pickle_path)
-    new_path = base_path + "_all" + extension
-
-    # Enregistrer le DataFrame global en fichier pickle
+    #df = df.iloc[:-2000000]
+    df_reset.reset_index(drop=True, inplace=True)
+    print(df_reset.info())
+    print(df_reset)
+    
     df_reset.to_pickle(new_path)
 
     return df_reset
+
+
+def ADCP_directoy_excels_one_pickle_file_processed_data(directory_path,pickle_name, date_debut, date_end_exclu,display = True):
+    # Initialiser un dictionnaire pour stocker les DataFrame
+    dfs = {}
+
+    # Parcourir tous les fichiers dans le répertoire
+    for filename in os.listdir(directory_path):
+        # Si le fichier est un fichier Excel
+        if filename.endswith(".csv"):
+            # Construire le chemin complet du fichier
+            file_path = os.path.join(directory_path, filename)
+            
+            # Lire le fichier Excel en DataFrame
+            df = read_semicolon_separated_csv(file_path)
+
+            df = df.loc[:, ['DateTime', 'Temperature', 'Pressure', 'AltimeterPressure', 'AltimeterDistanceAST', 'Pitch', 'Roll']]
+            df = df.rename(columns={'DateTime': 'Time'})
+            df = df.rename(columns={'Pressure': 'Sea pressure'})            
+            if display :
+                print("--------------------------")
+                print(f"filename : {filename}")
+                print(df)
+            #df = remove_jump_rows(df, df['Sea pressure'], threshold, fs)
+
+            # Ajouter le DataFrame au dictionnaire
+            dfs[filename] = df
+    base_path, extension = os.path.splitext(file_path)
+    new_path = base_path + pickle_name + ".pkl"
+    # Obtenir une liste des clés du dictionnaire (noms des fichiers) triées
+    keys = sorted(dfs.keys())
+
+    # Initialiser une liste pour stocker les DataFrame
+    df_list = []
+
+    # Parcourir les clés
+    for key in keys:
+        # Ajouter le DataFrame à la liste
+        df_list.append(dfs[key])
+        print(dfs[key])
+
+    # Concaténer les DataFrame
+    df = pd.concat(df_list)
+    print(df)
+    df_reset  = df.reset_index(drop=True)
+    print(df_reset)
+
+    # Enregistrer le DataFrame global en fichier pickle    
+    df_reset['Time'] = pd.to_datetime(df_reset['Time'])
+    df_reset = df_reset.loc[(df_reset['Time'] >= date_debut)]
+    df_reset = df_reset.loc[(df_reset['Time'] < date_end_exclu)]
+
+    #df = df.iloc[:-2000000]
+    df_reset.reset_index(drop=True, inplace=True)
+    print(df_reset.info())
+    print(df_reset)
+    
+    df_reset.to_pickle(new_path)

@@ -17,14 +17,14 @@ from Process_Datas.compute_spectrum import compute_spectrum
 from Process_Datas.remove_jump_rows import remove_jump_rows
 
 
-def process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff, fs, order, hbed, fs_data, fe) :
+def process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff, fs, order, hbed, fs_data, fe, date_debut, date_end_exclu) :
     df = dict_pressure_dataframe_to_organize_dataframe(excel_file_path, columns_to_drop)
     #df = df.iloc[N:6*N]
     add_tide_column(df, cutoff, fs, order)
     add_surface_column(df)
     cte_evaluation_wave = add_surface_correlation_column_and_cte_evaluation(df, fs, hbed)
     print(f"kp(pressure response factor): {cte_evaluation_wave[0]} | h(mean water depth in m) : {cte_evaluation_wave[1]} | k(wave number) : {cte_evaluation_wave[2]}")
-    df = remove_jump_rows(df, "Sea pressure", 0.11, fs_data)
+    #df = remove_jump_rows(df, "Sea pressure", 0.11, fs_data)
     df = df.reset_index(drop=True)
     
     # Séparer le chemin de base et l'extension
@@ -35,7 +35,10 @@ def process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff,
     #fourier_result = fourier(df['Sea pressure'],fmin,fmax, fsep)
     #print(fourier_result)
     #fourier_windows(df, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss)
-
+    # Enregistrer le DataFrame global en fichier pickle    
+    df['Time'] = pd.to_datetime(df['Time'])
+    df = df.loc[(df['Time'] >= date_debut)]
+    df = df.loc[(df['Time'] < date_end_exclu)]
     """wave_result = fourier_windows(df, hour, fmin, fsep, fmax, fsep)
     print(wave_result)"""
     """Temperature = df['Temperature']
