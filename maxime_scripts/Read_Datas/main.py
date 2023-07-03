@@ -47,15 +47,12 @@ print(df)
 df = df.head(N)
 print(df)
 
-# Calcule le coefficient de corrélation de Pearson
-correlation_coefficient = np.corrcoef(df['AltimeterPressure'], df['Sea pressure'])[0, 1]
-print(f"correlation_coefficient : {correlation_coefficient}")
 
-plot_dataframe(N, "ADCP : Sea pressure vs Altimeter pressure", 
+"""plot_dataframe(N, "ADCP : Sea pressure vs Altimeter pressure", 
                [(df['Time'], df['AltimeterPressure'], df['Sea pressure']),
                     (df['Time'].min(),df['Time'].max()),
                     (df['Time'].min(), pd.to_datetime("2023 02 15 12:45:00"), 'Pressure before singularity'), 
-                    (pd.to_datetime("2023 02 15 12:45:00"),df['Time'].max(), 'Pressure after singularity')])
+                    (pd.to_datetime("2023 02 15 12:45:00"),df['Time'].max(), 'Pressure after singularity')])"""
 
 
 # Enregistrer le DataFrame global en fichier pickle

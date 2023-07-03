@@ -62,7 +62,7 @@ def fourier(signal, fmin, fmax, fs):
 
 # Define the fourier_windows function
 
-def fourier_windows(df,df_signal_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss):
+def fourier_windows(df,df_signal_name, second, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss, save_data):
     # Initialize columns to store the results
     df["Tp,IG"] = np.nan
     df["frequency,IG"] = np.nan
@@ -75,7 +75,7 @@ def fourier_windows(df,df_signal_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_
     
     df['Hm0,total'] = np.nan
     
-    half_window = timedelta(seconds = seconds / 2)
+    half_window = timedelta(seconds= second / 2)
     
     # Loop through each timestamp
     for i, row in tqdm(list((df.iterrows()))):
@@ -105,8 +105,12 @@ def fourier_windows(df,df_signal_name, seconds, fmin_ig, fmax_ig, fmin_ss, fmax_
             df.loc[i, 'Hm0,SS'] = result_SS[2]
             
             df.loc[i,'Hm0,total'] = df.loc[i, 'Hm0,IG'] + df.loc[i, 'Hm0,SS']
-
-    return df
+            
+    if save_data != None:
+        df.to_pickle(save_data)
+        return df
+    else:
+        return df
 
 
 

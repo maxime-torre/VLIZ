@@ -44,7 +44,7 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
     Time_PS = df_PS['Time']
     print(f"len(Time_PS) : {len(Time_PS)}")
     Time = Time_ADCP
-    if Time_ADCP.equals(Time_PS):
+    """if Time_ADCP.equals(Time_PS):
         print("Time_ADCP et Time_PS are equals")
     else:
         print(f"Time_ADCP et Time_PS are not equals")
@@ -65,7 +65,7 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
         df_PS = df_PS[(df_PS['Time'] >= common_start) & (df_PS['Time'] <= common_end)]
         df_PS = df_PS.reset_index(drop=True)
         
-        Time = Time_ADCP
+        Time = Time_ADCP"""
     
     print(f"len(Time) : {len(Time)}")
 

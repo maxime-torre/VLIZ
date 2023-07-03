@@ -48,3 +48,23 @@ def resample_dataframe(path, freq='30T'):
     df = df[cols]
 
     return df
+
+def compare_time_columns(df1, df2, time_column='Time'):
+    # Assurez-vous que les colonnes sont de type datetime
+    df1[time_column] = pd.to_datetime(df1[time_column])
+    df2[time_column] = pd.to_datetime(df2[time_column])
+    
+    # Fusionnez les deux dataframes sur la colonne 'Time'
+    merged_df = pd.merge(df1, df2, on=time_column, how='outer')
+    
+    # Triez le dataframe fusionné par 'Time'
+    merged_df.sort_values(by=time_column, inplace=True)
+    
+    # Utilisez l'interpolation pour remplir les valeurs manquantes
+    merged_df.interpolate(inplace=True)
+    
+    # Séparez les dataframes
+    df1_filled = merged_df[df1.columns]
+    df2_filled = merged_df[df2.columns]
+    
+    return df1_filled, df2_filled

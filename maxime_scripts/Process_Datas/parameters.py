@@ -15,13 +15,14 @@ directory_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas
 pickle_dict_of_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data.pkl"
 pickle_all_adcp_data_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Adcp_sensor\\Trapegeer\\processed_dict_of_data_all.pkl"
 
-pickle_path_file_ADCP = "C:\Users\maxixme.torre\Documents\Infra_gravity_waves_datas\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\ADCP\All_ADCP_processed_data_8Feb_10Apr.pkl"
-pickle_path_file_Pressure_sensor = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\PRESSURE SENSOR\\210961_20220902_1748_process_data.pkl"
+pickle_path_file_ADCP = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_data_8Feb_10Apr.pkl"
+pickle_path_file_Pressure_sensor = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\PS\\All_PS_processed_data_8Feb_10Apr.pkl"
+pickle_path_file_buoys = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\BUOYS\\All_BUOYS_processed_data_8Feb_10Apr.pkl"
+
+save_data_ADCP_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_data_8Feb_10Apr_buoys_resample_final.pkl"
 
 
-
-N = 100000
-
+N = 5000
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 2
 dt = 1/fs
@@ -38,10 +39,11 @@ fmax_ig = 0.03 #1/30 # Minimum frequency
 fe_ig = 1/10
 fmin_ss = 0.03 #1/30
 fmax_ss = 1
-fe_ss = 3
+fe_ss = 2
 fsep = 1/30 # Separation frequency
 hour = 3 # Window size in hours
 minutes = 2
+
 seconds = 60
 fe = 4
 fs_data = 2
