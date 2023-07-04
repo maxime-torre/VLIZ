@@ -20,6 +20,7 @@ from Read_Datas.read_pickle_to_df import read_pickle_to_df
 from Process_Datas.add_waves_description_columns import fourier_windows
 from Plots_datas.plots_dataframe import plot_dataframe
 from Process_Datas.sub_sampling_dataframe import resample_dataframe, compare_time_columns
+from Process_Datas.butter_lowpass_filter import butter_lowpass_filter
 
 
 N = parameters.N
@@ -77,8 +78,13 @@ print('pickle_path_file_buoys_init')
 print(pickle_path_file_buoys_init)
 print("pickle_path_file_ADCP_init_resample")
 print(pickle_path_file_ADCP_init_resample)"""
+pickle_path_file_ADCP_init['AltimeterPressure'] = pickle_path_file_ADCP_init['AltimeterPressure']*10
+print(pickle_path_file_ADCP_init)
+pickle_path_file_ADCP_init['AltimeterPressure'] =  pickle_path_file_ADCP_init['AltimeterPressure'] - butter_lowpass_filter(pickle_path_file_ADCP_init['AltimeterPressure'], cutoff, fs, order)
+print(pickle_path_file_ADCP_init)
 
 
 pickle_path_file_ADCP_init = fourier_windows(pickle_path_file_ADCP_init, 'AltimeterPressure', seconds, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fe_ig, fe_ss, save_data_ADCP_path)
 print(pickle_path_file_ADCP_init)
+
 

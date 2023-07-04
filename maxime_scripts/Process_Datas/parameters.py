@@ -22,11 +22,11 @@ pickle_path_file_buoys = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_wav
 save_data_ADCP_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_data_8Feb_10Apr_buoys_resample_final.pkl"
 
 
-N = 5000
+N = 100000
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 2
 dt = 1/fs
-cutoff = 1/600
+cutoff = 1/300
 order = 2
 
 hbed = 0.3 # Sensor height from bed (m)
@@ -35,16 +35,16 @@ hbed = 0.3 # Sensor height from bed (m)
 #fsep = 1/16.87 
 # fsep = 1/500
 fmin_ig = 0.003 #1/(5*60)
-fmax_ig = 0.03 #1/30 # Minimum frequency
-fe_ig = 1/10
-fmin_ss = 0.03 #1/30
+fmax_ig = 1/16.87 #1/30 # Minimum frequency
+fe_ig = 2
+fmin_ss = 1/16.87 #1/30
 fmax_ss = 1
 fe_ss = 2
 fsep = 1/30 # Separation frequency
 hour = 3 # Window size in hours
 minutes = 2
 
-seconds = 60
+seconds = 60*60*3 #3heures
 fe = 4
 fs_data = 2
 fs_data_adcp_all = 4
