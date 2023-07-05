@@ -38,14 +38,14 @@ threshold = parameters.threshold
 Trapergeer_wave_height_text_file = parameters.Trapergeer_wave_height_text_file
 Trapergeer_wave_period_text_file = parameters.Trapergeer_wave_period_text_file
 
-"""df_buoy = merge_data(Trapergeer_wave_height_text_file,Trapergeer_wave_period_text_file, "All_BUOYS_processed_data_8Feb_10Apr",'2023-02-08', '2023-04-11')
-print(df_buoy)"""
+df_buoy = merge_data(Trapergeer_wave_height_text_file,Trapergeer_wave_period_text_file, "All_BUOYS_processed_data_8Feb_10Apr",'2023-02-08', '2023-04-11')
+print(df_buoy)
 
-test = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_data_8Feb_10Apr.pkl"
+"""test = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_data_8Feb_10Apr.pkl"
 df = read_pickle_to_df(test)
 print(df)
 df = df.head(N)
-print(df)
+print(df)"""
 
 
 """plot_dataframe(N, "ADCP : Sea pressure vs Altimeter pressure", 
