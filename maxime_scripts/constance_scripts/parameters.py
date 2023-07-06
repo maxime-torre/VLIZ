@@ -9,4 +9,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-ad2cp_file_path = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\constance_adcp_data\\store_adcp_00.pckl"
+csv_file = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\maxime_scripts\\constance_scripts\\Greenland_mooring.csv"
+pickle_file = "C:\\Users\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\maxime_scripts\\constance_scripts\\Greenland_mooring.pickle"
+pickle_file_mean_daily = "C:\\Users\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\maxime_scripts\\constance_scripts\\Greenland_mooring_mean_daily.pickle"
