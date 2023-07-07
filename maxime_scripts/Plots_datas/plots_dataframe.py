@@ -112,6 +112,9 @@ def plot_dataframe(N, y_legend_name, *args):
     # Create a list to hold the names of all y traces for the title
     y_names = []
 
+    # Create a list of pastel colors for the rectangles
+    pastel_colors = ["#FED9B7", "#B1E8ED", "#FED9E6", "#F6EFA6", "#A6C48A"]  # Replace these with your preferred pastel colors.
+
     for arg in args:
         x, *ys = arg[0]
         x_range = arg[1] if len(arg) > 1 else None
@@ -121,17 +124,19 @@ def plot_dataframe(N, y_legend_name, *args):
             xmin, xmax = x_range
             mask = (x >= xmin) & (x <= xmax)
             x = x[mask]
-            ys = [y.reindex(x.index)[mask] for y in ys]  # Réindexation avant d'appliquer le masque
+            ys = [y.reindex(x.index)[mask] for y in ys]  # Reindex before applying mask
 
         for y in ys:
             fig.add_trace(go.Scatter(x=x, y=y, mode='lines', name=y.name))
             y_names.append(y.name)
 
-        for crossbar in crossbars:
+        for i, crossbar in enumerate(crossbars):
             x1_crossbar, x2_crossbar, name = crossbar
             min_y = min(min(y) for y in ys)
             max_y = max(max(y) for y in ys)
-            line_color = get_random_color()
+
+            # Use the index of the crossbar to determine its color
+            line_color = pastel_colors[i % len(pastel_colors)]
 
             # Draw rectangle
             fig.add_shape(type="rect",
@@ -148,29 +153,29 @@ def plot_dataframe(N, y_legend_name, *args):
                 showlegend=True,
                 name=name
             ))
-
     # Create the title using the x and y names
-    title_text = f"Plot of {', '.join(y_names)} as a function of {x.name} over {N} values"
+    title_text = f"Plot over {N} samples"
 
     fig.update_layout(
         title_text=title_text,
-        title_font_size=25,
+        title_font_size=30,
         legend=dict(
             yanchor="top",
-            y=-0,
+            y=-0.15,
             xanchor="left",
             x=0,
-            font=dict(size=20)
+            font=dict(size=30)
         ),
         xaxis_title=x.name,
         yaxis_title=y_legend_name,  # Ajout du nom de la légende de l'axe Y
-        xaxis_tickfont=dict(size=25),
-        yaxis_tickfont=dict(size=25),
-        xaxis_title_font=dict(size=25),
-        yaxis_title_font=dict(size=25)
+        xaxis_tickfont=dict(size=30),
+        yaxis_tickfont=dict(size=30),
+        xaxis_title_font=dict(size=30),
+        yaxis_title_font=dict(size=30)
     )
 
     fig.show()
+
 
 def plot_dataframe_columns(df):
     # Chercher la première colonne qui est de type datetime

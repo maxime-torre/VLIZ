@@ -14,7 +14,7 @@ sys.path.insert(0, parent_dir)
 
 import numpy as np
 
-def compute_spectrum(signal, signal_name, fe, n_segments=100):
+def compute_spectrum_dB(signal, signal_name, fe, n_segments=100):
     # Assurez-vous que le signal est numérique
     if not np.issubdtype(signal.dtypes, np.number):
         raise ValueError("Signal should be numeric.")
@@ -63,6 +63,57 @@ def compute_spectrum(signal, signal_name, fe, n_segments=100):
     freqs = pd.Series(freqs, name='Frequency (Hz)')
 
     return amplitude_db_avg, freqs
+
+def compute_spectrum_energy(signal, signal_name, fe, n_segments=100):
+    # Assurez-vous que le signal est numérique
+    if not np.issubdtype(signal.dtypes, np.number):
+        raise ValueError("Signal should be numeric.")
+    
+    # Assurez-vous que le signal est divisible par n_segments
+    divisible_length = len(signal) - len(signal) % n_segments
+    signal = signal[:divisible_length]
+
+    # Divise le signal en segments pour le moyennage spectral
+    segments = np.array_split(signal, n_segments)
+    
+    log_energy_avg = []
+    freqs_list = []
+
+    for segment in segments:
+        window = np.hamming(len(segment))
+        segment = np.array(segment)
+        segment = segment - segment.mean()
+        
+        segment = segment * window
+
+        # Echantillonnage du signal
+        t = np.arange(0, len(segment)/fe, 1/fe)
+
+        # Calcul de la FFT
+        fft_result = np.fft.fft(segment)
+
+        # Calcul des fréquences correspondant aux valeurs de la FFT
+        freqs = np.fft.fftfreq(len(segment), 1/fe)
+
+        # On ne garde que la moitié des valeurs (partie positive du spectre)
+        fft_result = fft_result[0:len(fft_result)//2]
+        freqs = freqs[0:len(freqs)//2]
+
+        # Calcul de l'énergie
+        energy = np.abs(fft_result)**2
+        log_energy = 10 * np.log10(energy)
+        
+        log_energy_avg.append(log_energy)
+        freqs_list.append(freqs)
+    
+    # Calcul du spectre moyen
+    log_energy_avg = np.mean(np.array(log_energy_avg), axis=0)
+    freqs = np.mean(np.array(freqs_list), axis=0)
+
+    log_energy_avg = pd.Series(log_energy_avg, name=signal_name)
+    freqs = pd.Series(freqs, name='Frequency (Hz)')
+
+    return log_energy_avg, freqs
 
 
 

@@ -22,7 +22,7 @@ pickle_path_file_buoys = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_wav
 save_data_ADCP_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_daata_wave_informations.pkl"
 
 
-N = 1000000
+N = 20000
 #-------------- butter_lowpass_filter | parameters --------------#
 fs = 4
 dt = 1/fs

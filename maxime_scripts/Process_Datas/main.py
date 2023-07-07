@@ -58,7 +58,7 @@ pickle_path_file_buoys = parameters.pickle_path_file_buoys
 
 #test = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\ADCP\\S102377A024_Test_RBR_Q3B0_1_process_data.pkl"
 
-#plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data_adcp_all, fe, N,  seconds, fe_ig, fe_ss, cutoff)
+plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, fmin_ig, fmax_ig, fmin_ss, fmax_ss, fs_data_adcp_all, fe, N,  seconds, fe_ig, fe_ss, cutoff)
 pickle_path_file_ADCP_init = read_pickle_to_df(pickle_path_file_ADCP)
 #pickle_path_file_ADCP_init = pickle_path_file_ADCP_init.head(N)
 pickle_path_file_ADCP_init['Time'] = pickle_path_file_ADCP_init['Time'].dt.floor('S')

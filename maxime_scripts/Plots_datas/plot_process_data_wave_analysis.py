@@ -182,7 +182,15 @@ def plot_process_data_wave_analysis(pickle_path_file_ADCP, pickle_path_file_Pres
                     
     #ADCP --> 3D plot : Amplitude (dB) , Freqs (Hz), Depth (m)
     
-
+    #Sea Pressure PS centred vs AST pressure from ADCP with tide
+    plot_dataframe(N, "Sea Pressure centred with tide (dBar)" ,
+                   [(Time,AST_pressure_ADCP_copy,Sea_pressure_PS_centred_copy),
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+    
+    #Sea Pressure PS centred vs AST pressure from ADCP without tide
+    plot_dataframe(N, "Sea Pressure centred without tide (dBar)" ,
+                   [(Time_without_tide,AST_pressure_ADCP_copy_without_tide,Sea_pressure_PS_centred_copy_without_tide),
+                    (Time_without_tide.min()+timedelta(minutes=5),Time_without_tide.max()-timedelta(minutes=5))])
     #Spetre (Amplitude in dB)
     plot_dataframe(N, "FFT Amplitude of pressure signal (dB)",
                    [(freqs_spectrum,AST_pressure_ADCP_copy_without_tide_spectrum, Sea_pressure_PS_centred_copy_without_tide_spectrum),

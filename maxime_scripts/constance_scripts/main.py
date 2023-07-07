@@ -21,7 +21,32 @@ pickle_file_mean_daily = parameters.pickle_file_mean_daily
 
 df = read_pickle_to_df(pickle_file)
 print("df without daily mean")
+# Assurez-vous que 'Datetime' et 'Date' sont dans le bon format datetime
+"""df['Datetime'] = pd.to_datetime(df['Datetime'])
+df['Date'] = pd.to_datetime(df['Date'])
+
+# Mettez à jour les valeurs NaT dans 'Datetime' avec la valeur correspondante de 'Date'
+df.loc[df['Datetime'].isna(), 'Datetime'] = df['Date']
+
+# Si vous voulez que les dates sans heure aient 00:00:00 comme heure, vous pouvez le faire comme ça :
+df.loc[df['Datetime'].dt.time == pd.to_datetime('00:00:00').time(), 'Datetime'] = df['Datetime'].dt.date.astype(str) + ' 00:00:00'
+df['Datetime'] = pd.to_datetime(df['Datetime'])"""
 print(df)
+
+df_pressure = df['Pressure, db']
+df_pressure = pd.Series(df_pressure, name="df_pressure")
+
+
+
+plot_dataframe(len(df), "Pressure dBar", 
+               [(df['Datetime'],df_pressure),
+                    (df['Datetime'].min(),df['Datetime'].max())])
+
+#-----------------------------------------
+
+
+na_rows = df[df['Datetime'].isna()]
+print(na_rows)
 
 
 daily_means = read_pickle_to_df(pickle_file_mean_daily)
@@ -31,15 +56,15 @@ print("df with daily mean")
 print(daily_means)
 
 
-df_pressure = df['Pressure, db']
+"""df_pressure = df['Pressure, db']
 df_pressure = pd.Series(df_pressure, name="df_pressure")
 df_mean_daily_pressure = daily_means['Pressure, db']
-df_mean_daily_pressure = pd.Series(df_mean_daily_pressure, name="df_mean_daily_pressure")
+df_mean_daily_pressure = pd.Series(df_mean_daily_pressure, name="df_mean_daily_pressure")"""
 
 
-plot_dataframe(len(df), "Pressure dBar", 
+"""plot_dataframe(len(df), "Pressure dBar", 
                [(df['Datetime'],df_pressure, df_mean_daily_pressure),
-                    (df['Datetime'].min(),df['Datetime'].max())])
+                    (df['Datetime'].min(),df['Datetime'].max())])"""
 
 """df = read_semicolon_separated_csv(csv_file)
 print(df)
