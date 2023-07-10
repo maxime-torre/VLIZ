@@ -289,3 +289,46 @@ def plot_3d_spectrum(spectrum, freqs, depth):
     fig.colorbar(surface)  # ajouter une barre de couleur pour la surface
 
     plt.show()
+    
+import plotly.graph_objects as go
+import numpy as np
+from scipy import stats
+
+def plot_with_linear_regression(x, y, title_text='Votre titre ici'):
+    # Création d'une régression linéaire à partir de vos données
+    slope, intercept, r_value, p_value, std_err = stats.linregress(x, y)
+    line = slope*x+intercept
+
+    # Création du scatter plot
+    fig = go.Figure()
+
+    fig.add_trace(go.Scatter(
+        x=x, y=y, mode='lines',  # Changement du mode à 'lines'
+        name=f'{y.name} vs {x.name}'
+    ))
+
+    fig.add_trace(go.Scatter(
+        x=x, y=line, mode='lines',
+        name=f'Fit: Y = {slope:.2f}*X + {intercept:.2f}, r² = {r_value**2:.2f}'
+    ))
+
+    # Mise à jour du layout pour correspondre au format donné
+    fig.update_layout(
+        title_text=title_text,
+        title_font_size=30,
+        legend=dict(
+            yanchor="top",
+            y=-0.15,
+            xanchor="left",
+            x=0,
+            font=dict(size=30)
+        ),
+        xaxis_title=x.name,
+        yaxis_title=y.name,
+        xaxis_tickfont=dict(size=30),
+        yaxis_tickfont=dict(size=30),
+        xaxis_title_font=dict(size=30),
+        yaxis_title_font=dict(size=30)
+    )
+
+    fig.show()

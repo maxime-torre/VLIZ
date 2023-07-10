@@ -232,3 +232,112 @@ def fourier_windows_yuri(data, surface, minute, fmin, fsep, fmax, fs, save_data_
     
     # Return the results
     return df
+
+def depth_to_pressure(surface, tide, fs):
+    hbed = 0.3 # Sensor height from bed (m)  
+    tide_signal = tide + hbed
+    
+    signal = surface
+    h = tide_signal.mean() #Mean water depth in (m)
+    sample=len(signal) #number of sample in input file
+    
+    FFTEta = np.fft.fft(signal)
+    
+    f=np.linspace(0,fs,len(signal)) #frequency
+    w=2*np.pi*f #Angular frequency
+    
+    #Estimation of wave number (k) from Goad (2010)
+    k0=w**2/9.81 #Deep water wave number
+    k0h=k0*h
+    L0 = 9.81/(2*np.pi)*(1/f)**2
+    k0 = 2*np.pi/L0
+    L = L0*np.tanh(np.sinh(k0h))
+    k = 2*np.pi/L
+    # k=kh/h #Calculating wave number from Goda (2010)
+    k[w==0]=0
+    
+    #Calculation of pressure response factor
+    Kp=np.cosh(k*hbed)/np.cosh(k*h)
+    # Kp=np.cosh(-k*(h-hbed))/np.cosh(k*h)
+    kmaxL=np.pi/(h-hbed) # Wave number associated with fmaxpcorrL
+    KpminL=np.cosh(kmaxL*hbed)/np.cosh(kmaxL*h) # Minimum Limit for K_p calculated based on linear wave theory
+    Kp[Kp < KpminL] = KpminL # Check to avoid large amplification, Kp should be larger than minimum K_p calculated based on linear wave theory
+    
+    Kp1=Kp[0:int(sample/2)]
+    Kp1=np.flipud(Kp1)
+
+    
+    # Kp[int(sample/2):]=Kp1 #make Kp symetric around fr/2
+    Kp[len(Kp) - len(Kp1):] = Kp1 #make Kp symetric around fr/2
+    
+    #correcting pressure
+    FFTEtacor= FFTEta/Kp			    # applies correction factor
+    Eta = np.real(np.fft.ifft(FFTEtacor))	# corrected water surface levels time series
+    return Eta
+
+def pressure_to_depth(pressure_corrected, tide, fs):
+    hbed = 0.3 # Sensor height from bed (m)
+    tide_signal = tide + hbed
+
+    signal = pressure_corrected
+    h = tide_signal.mean() #Mean water depth in (m)
+    sample=len(signal) #number of sample in input file
+
+    FFTEta = np.fft.fft(signal)
+
+    f=np.linspace(0,fs,len(signal)) #frequency
+    w=2*np.pi*f #Angular frequency
+
+    #Estimation of wave number (k) from Goad (2010)
+    k0=w**2/9.81 #Deep water wave number
+    k0h=k0*h
+    L0 = 9.81/(2*np.pi)*(1/f)**2
+    k0 = 2*np.pi/L0
+    L = L0*np.tanh(np.sinh(k0h))
+    k = 2*np.pi/L
+    # k=kh/h #Calculating wave number from Goda (2010)
+    k[w==0]=0
+
+    #Calculation of pressure response factor
+    Kp=np.cosh(k*hbed)/np.cosh(k*h)
+    # Kp=np.cosh(-k*(h-hbed))/np.cosh(k*h)
+    kmaxL=np.pi/(h-hbed) # Wave number associated with fmaxpcorrL
+    KpminL=np.cosh(kmaxL*hbed)/np.cosh(kmaxL*h) # Minimum Limit for K_p calculated based on linear wave theory
+    Kp[Kp < KpminL] = KpminL # Check to avoid large amplification, Kp should be larger than minimum K_p calculated based on linear wave theory
+
+    Kp1=Kp[0:int(sample/2)]
+    Kp1=np.flipud(Kp1)
+
+    # Kp[int(sample/2):]=Kp1 #make Kp symetric around fr/2
+    Kp[len(Kp) - len(Kp1):] = Kp1 #make Kp symetric around fr/2
+
+    #correcting pressure
+    FFTEtauncor= FFTEta*Kp # applies inverse of correction factor
+    Eta = np.real(np.fft.ifft(FFTEtauncor)) # uncorrected water surface levels time series
+    return Eta
+
+
+def pressure_from_depth_hydraustatique(h):
+    rho = 1018 # Density of sea water in kg/m^3
+    g = 9.81 # Acceleration due to gravity in m/s^2
+    P = rho * g * h
+    P_dbar = P / 1e4 # Convert from Pascals to decibars
+    return P_dbar
+
+def pressure_from_depth_hydraustatique_and_dynamique(surface, tide, fs, hbed):
+    tide_signal = tide + hbed
+    f=np.linspace(0,fs,len(surface)) #frequency
+    w=2*np.pi*f #Angular frequency
+    
+    #Estimation of wave number (k) from Goad (2010)
+    k0=w**2/9.81 #Deep water wave number
+    k0h=k0*tide_signal
+    L0 = 9.81/(2*np.pi)*(1/f)**2
+    k0 = 2*np.pi/L0
+    L = L0*np.tanh(np.sinh(k0h))
+    k = 2*np.pi/L
+    Kp=np.cosh(k*hbed)/np.cosh(k*tide_signal)
+    pressure = (surface)*Kp
+    
+    return pressure
+    

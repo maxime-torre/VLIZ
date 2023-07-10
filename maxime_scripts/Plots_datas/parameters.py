@@ -27,3 +27,7 @@ fmin_ig = 1/(5*60)
 fmax_ig = 1/16.87 # Minimum frequency
 fmin_ss = fmax_ig
 fmax_ss = 1
+hour = 28
+seconds = 20
+hbed = 0.3
+latitude = 52.115950
