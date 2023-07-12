@@ -17,32 +17,45 @@ from Read_Datas.read_pickle_to_df import read_pickle_to_df
 from Process_Datas.add_waves_description_columns import fourier_windows
 from tqdm import tqdm
 import numpy as np
+from Process_Datas.resample_dataframe import resample_dataframes
 
 def plot_pressure_data_comparaison(pickle_path_file_ADCP, pickle_path_file_Pressure_sensor, N, cutoff, fe_ADCP, fe_PS, samples_cutoff_filter, fmin_ig, fmax_ig, fmin_ss, fmax_ss):
-
+    fe_ratio = int(fe_PS/fe_ADCP)
     df_ADCP = read_pickle_to_df(pickle_path_file_ADCP)
     df_ADCP = df_ADCP.head(N)
     df_ADCP['Time'] = df_ADCP['Time'].dt.floor('S')
 
     df_PS = read_pickle_to_df(pickle_path_file_Pressure_sensor) #PS for Pressure Sensor (RBR file)
-    df_PS = df_PS.head(N)
+    df_PS = df_PS.head(fe_ratio*N)
     df_PS['Time'] = df_PS['Time'].dt.floor('S')
     
-    print("df_ADCP")
+    """print("before resample df_ADCP")
     print(df_ADCP)
     print()
-    print("df_PS")
-    print(df_PS)
+    print("before resample df_PS")
+    print(df_PS)"""
+    df_PS = df_PS[::fe_ratio]
+    
+    """print("after resampled f_ADCP")
+    print(df_ADCP)
+    print()
+    print("after resampled df_PS")
+    print(df_PS)"""
     
     # Pour df_ADCP, vous voulez ajouter 000 ms à la première entrée de chaque seconde et 500 ms à la seconde.
 
+    print("df_PS['Time']")
+    print(df_PS['Time'])   
+    
+    print("df_ADCP['Time']")
+    print(df_ADCP['Time'])  
     
     Time_ADCP = df_ADCP['Time']
     print(f"len(Time_ADCP) : {len(Time_ADCP)}")
     Time_PS = df_PS['Time']
     print(f"len(Time_PS) : {len(Time_PS)}")
     Time = Time_ADCP
-    
+     
     if Time_ADCP.equals(Time_PS):
         print("Time_ADCP et Time_PS are equals")
     else:
@@ -64,8 +77,20 @@ def plot_pressure_data_comparaison(pickle_path_file_ADCP, pickle_path_file_Press
         df_PS = df_PS[(df_PS['Time'] >= common_start) & (df_PS['Time'] <= common_end)]
         df_PS = df_PS.reset_index(drop=True)
         
-        Time = Time_PS
+        Time = Time_ADCP
+    print("df_PS['Time']")
+    print(df_PS['Time'])   
+    
+    print("df_ADCP['Time']")
+    print(df_ADCP['Time'])   
 
+    print("df_ADCP")
+    print(df_ADCP)
+    print()
+    print("df_PS")
+    print(df_PS)
+    print("Time")
+    print(Time)
     
     Temperature_ADCP = df_ADCP['Temperature']
     Temperature_ADCP = pd.Series(Temperature_ADCP, name="Temperature_ADCP")
@@ -119,10 +144,10 @@ def plot_pressure_data_comparaison(pickle_path_file_ADCP, pickle_path_file_Press
     
     #Sea Pressure PS vs AST pressure from ADCP (signal)
     plot_dataframe(N, "AltimeterPressure (dBar) vs AltimeterDistanceAST (m)" ,
-                   [(Time,AST_distance_ADCP, Altimeter_pressure_ADCP),
+                   [(Time,df_ADCP['AltimeterDistanceAST'], df_ADCP['AltimeterPressure']),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
     
-    #Sea Pressure PS centred vs AST pressure from ADCP (signal)
+    """#Sea Pressure PS centred vs AST pressure from ADCP (signal)
     plot_dataframe(N, "ADCP vs PS Pressure (dBar)" ,
                    [(Time,AST_distance_ADCP,Altimeter_pressure_ADCP,Sea_pressure_PS_centred),
                     (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
@@ -130,7 +155,7 @@ def plot_pressure_data_comparaison(pickle_path_file_ADCP, pickle_path_file_Press
     #Sea Pressure PS centred shifted vs AST pressure from ADCP (signal)
     plot_dataframe(N, "ADCP vs PS Pressure (dBar)" ,
                    [(Time,AST_distance_ADCP_copy,Altimeter_pressure_ADCP_copy,Sea_pressure_PS_centred_copy),
-                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])
+                    (Time.min()+timedelta(minutes=5),Time.max()-timedelta(minutes=5))])"""
     
     
     #Eliminate the Tide :
