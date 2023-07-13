@@ -11,7 +11,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Plots_datas import parameters
+import parameters
 from Plots_datas.plots_dataframe import plot_dataframe_dict, plot_dataframe, plot_dataframe_columns, plot_with_linear_regression
 from Read_Datas.read_excel_sheets_to_dfs import read_excel_sheets_to_dfs
 from Read_Datas.read_pickle_to_df import read_pickle_to_df
@@ -40,16 +40,18 @@ fmax_ss = parameters.fmax_ss
 hour = parameters.hour
 seconds = parameters.seconds
 hbed = parameters.hbed
+latitude = parameters.latitude
 
 
 
 plot_ADCP_PressurevsAltimeter_comparaison(N,
-                                          pickle_path_file_ADCP_trapergeer_2023,
+                                          pickle_path_file_ADCP_test_september_2022,
                                           cutoff,
                                           fe_ADCP,
                                           fmin_ig,
                                           fmax_ig,
                                           fmin_ss,
-                                          fmax_ss)
+                                          fmax_ss,
+                                          latitude)
 
 

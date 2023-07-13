@@ -17,8 +17,8 @@ pickle_path_file_Pressure_sensor_trapergeer_2023 = "C:\\Users\\maxixme.torre\\Do
 
 pickle_path_file_ADCP_test_september_2022 = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\ADCP\\S102377A024_Test_RBR_Q3B0_1_process_data.pkl"
 pickle_path_file_Pressure_sensor_test_september_2022 = "C:\\Users\\maxixme.torre\\Documents\\20220901-PS2201_test_RBR\\Datas\\PRESSURE SENSOR\\210961_20220902_1748_process_data.pkl"
-N = 1200000
-
+N = 500000
+ 
 cutoff = 1/(60*10)
 fe_ADCP = 2
 fe_PS = 4
@@ -26,8 +26,8 @@ samples_cutoff_filter = fe_ADCP*60*60*4 #suppression des échantillons des 2 pre
 fmin_ig = 1/(5*60)
 fmax_ig = 1/16.87 # Minimum frequency
 fmin_ss = fmax_ig
-fmax_ss = 1
+fmax_ss = 1 
 hour = 28
 seconds = 20
 hbed = 0.3
-latitude = 52.115950
+latitude = 51.1430556

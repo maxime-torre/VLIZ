@@ -106,7 +106,7 @@ def subplot_dataframe(df, N, *args):
 
     fig.show()
     
-def plot_dataframe(N, y_legend_name, *args):
+def plot_dataframe(N, y_legend_name, title_name,*args):
     fig = go.Figure()
 
     # Create a list to hold the names of all y traces for the title
@@ -154,14 +154,14 @@ def plot_dataframe(N, y_legend_name, *args):
                 name=name
             ))
     # Create the title using the x and y names
-    title_text = f"Plot over {N} samples"
+    title_text = title_name
 
     fig.update_layout(
         title_text=title_text,
         title_font_size=30,
         legend=dict(
             yanchor="top",
-            y=-0.15,
+            y=-0.16,
             xanchor="left",
             x=0,
             font=dict(size=30)
