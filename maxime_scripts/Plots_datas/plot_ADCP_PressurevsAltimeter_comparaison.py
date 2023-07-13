@@ -9,7 +9,6 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Plots_datas import parameters
 from Plots_datas.plots_dataframe import plot_dataframe_dict, plot_dataframe, plot_dataframe_columns, plot_with_linear_regression
 from Read_Datas.read_excel_sheets_to_dfs import read_excel_sheets_to_dfs
 from Read_Datas.read_pickle_to_df import read_pickle_to_df

@@ -12,7 +12,7 @@ current_dir = os.path.dirname(os.path.abspath(__file__))
 parent_dir = os.path.dirname(current_dir)
 sys.path.insert(0, parent_dir)
 
-from Process_Datas import parameters
+import parameters
 from Process_Datas.process_concatenate_save_dataframe import process_concatenate_save_dataframe
 
 N = parameters.N
@@ -33,12 +33,13 @@ fmax_ss = parameters.fmax_ss
 fe_ig = parameters.fe_ig
 fe_ss = parameters.fe_ss
 hour = parameters.hour
-minutes = parameters.minutes
 seconds = parameters.seconds
 fe=parameters.fe
 cutoff_low_pass = parameters.cutoff_low_pass
 fs_data = parameters.fs_data
+date_debut = parameters.date_debut
+date_end_exclu = parameters.date_end_exclu
 
 
-df = process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff, fs, order, hbed, fs_data, fe)
+df = process_concatenate_save_dataframe(excel_file_path, columns_to_drop, cutoff, fs, order, hbed, fs_data, fe, date_debut, date_end_exclu)
 print(df)

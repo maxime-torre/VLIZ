@@ -26,7 +26,6 @@ Trapergeer_wave_period_text_file = "C:\\Users\\maxixme.torre\\Documents\\Infra_g
 
 save_data_ADCP_path = "C:\\Users\\maxixme.torre\\Documents\\Infra_gravity_waves_datas\\Trapegeer_8Feb_10Apr_2023_ADCP_PS_BUOYS\\ADCP\\All_ADCP_processed_daata_wave_informations.pkl"
 
-
 N = 2000000
 fs = 2
 threshold = 0.1

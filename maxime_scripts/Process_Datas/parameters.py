@@ -51,3 +51,7 @@ fs_data_adcp_all = 4
 cutoff_low_pass = 0.1
 
 threshold = 0.1
+
+excel_PS_before_time_shift = "C:\\Users\\maxixme.torre\\Documents\IG-WAVES\PS2201 - InfragravityWaves\07 data\Winter 22-23\20230417-IGWavesDeployment\Winter 22-23\RBR 210960\210960_20230417_0957.xlsx"
+date_debut = '2022-12-15' #00h00 de 2022-12-15
+date_end_exclu = '2023-03-13' #23h59 de 2023-03-13
